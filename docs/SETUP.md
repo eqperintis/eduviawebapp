@@ -38,7 +38,7 @@ hPanel → the Node.js app → **Environment variables**. Hostinger replaces the
 | `CRON_SECRET` | another long random string |
 | `TZ` | `Asia/Kuala_Lumpur` |
 | `EMAIL_PROVIDER` | `gmail` |
-| `EMAIL_FROM` | `eduvia.alif@gmail.com` |
+| `EMAIL_FROM` | `eqperintis.a@gmail.com` |
 | `EMAIL_FROM_NAME` | `Eduvia` (the sender name people see) |
 | `EMAIL_API_KEY` | the Google App Password from step 4 |
 | `GOOGLE_CLIENT_ID` | step 6 |
@@ -49,15 +49,15 @@ A changed variable only takes effect after a **new build**: push a commit or pre
 
 After the first deploy, open the app's **Runtime logs**. You should see `[migrate] applied …`, `created admin …` and `created the Eduvia enquiry form`, and no errors. One "Server is not running" line during a restart is harmless.
 
-## 4. Email (from eduvia.alif@gmail.com)
+## 4. Email (from eqperintis.a@gmail.com)
 
 The app sends through Gmail with an **App Password**, a separate 16-character password only for this app. Your real Gmail password is never used.
 
-1. Sign in to <https://myaccount.google.com> as `eduvia.alif@gmail.com`.
+1. Sign in to <https://myaccount.google.com> as `eqperintis.a@gmail.com`.
 2. **Security** → turn on **2-Step Verification** (App Passwords only exist once it's on).
 3. Open <https://myaccount.google.com/apppasswords>, name it `Eduvia Marketing`, press **Create**. Copy the 16 letters (spaces don't matter).
-4. In hPanel's environment variables (all of them, step 3): `EMAIL_PROVIDER=gmail`, `EMAIL_FROM=eduvia.alif@gmail.com`, `EMAIL_FROM_NAME=Eduvia`, `EMAIL_API_KEY=<the 16 letters>`. Rebuild.
-5. Check: the Account page says "Emails go out through gmail as eduvia.alif@gmail.com". In any automation, open an **Email them** step and press **Send me a test**.
+4. In hPanel's environment variables (all of them, step 3): `EMAIL_PROVIDER=gmail`, `EMAIL_FROM=eqperintis.a@gmail.com`, `EMAIL_FROM_NAME=Eduvia`, `EMAIL_API_KEY=<the 16 letters>`. Rebuild.
+5. Check: the Account page says "Emails go out through gmail as eqperintis.a@gmail.com". In any automation, open an **Email them** step and press **Send me a test**.
 
 Good to know:
 - Replies to the "new submission" alert go straight to the person who filled in the form (and the email has a **Reply** button too).
@@ -127,5 +127,5 @@ The form only accepts submissions from `eduvia.my` (and its subdomains). Change 
 
 - Sign in at https://marketing.eduvia.my as `eduvia.alif@gmail.com`.
 - Submit the form on eduvia.my: it shows under **Submissions**, you get the alert email, and an active automation shows a run under **Runs**.
-- **Send me a test** arrives from Eduvia <eduvia.alif@gmail.com>, in the Eduvia look.
+- **Send me a test** arrives from Eduvia <eqperintis.a@gmail.com>, in the Eduvia look.
 - A Google Sheets step adds a row.
