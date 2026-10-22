@@ -32,7 +32,7 @@ hPanel → the Node.js app → **Environment variables**. Hostinger replaces the
 | --- | --- |
 | `DATABASE_URL` | from step 1 |
 | `SESSION_SECRET` | a long random string (`openssl rand -base64 32`) |
-| `ADMIN_EMAIL` | `eduvia.alif@gmail.com` |
+| `ADMIN_EMAIL` | `eqperintis.a@gmail.com` |
 | `ADMIN_PASSWORD` | the password you'll sign in with first (change it later on the Account page) |
 | `APP_URL` | `https://marketing.eduvia.my` |
 | `CRON_SECRET` | another long random string |
@@ -82,9 +82,9 @@ All at <https://console.cloud.google.com>, signed in with the Google account tha
    - Google Drive API
    - Google Picker API
 3. **OAuth consent screen** (Google Auth Platform): **APIs & Services** → **OAuth consent screen** → **Get started**.
-   - App name: `Eduvia Marketing`. User support email: `eduvia.alif@gmail.com`.
+   - App name: `Eduvia Marketing`. User support email: `eqperintis.a@gmail.com`.
    - Audience: **External**.
-   - Contact email: `eduvia.alif@gmail.com`. Agree and **Create**.
+   - Contact email: `eqperintis.a@gmail.com`. Agree and **Create**.
 4. **Branding** (left menu):
    - App logo: upload `public/brand/apple-touch-icon.png` from this repo (120×120 or larger, square).
    - App home page: `https://eduvia.my`
@@ -125,7 +125,7 @@ The form only accepts submissions from `eduvia.my` (and its subdomains). Change 
 
 ## 8. Final checks
 
-- Sign in at https://marketing.eduvia.my as `eduvia.alif@gmail.com`.
+- Sign in at https://marketing.eduvia.my as `eqperintis.a@gmail.com`.
 - Submit the form on eduvia.my: it shows under **Submissions**, you get the alert email, and an active automation shows a run under **Runs**.
 - **Send me a test** arrives from Eduvia <eqperintis.a@gmail.com>, in the Eduvia look.
 - A Google Sheets step adds a row.

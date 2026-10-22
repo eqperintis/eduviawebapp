@@ -114,7 +114,7 @@ export function StepEditor({ node, nodes, trigger, onDone, onDeleted, onClose, g
       {node.type === "notify" && (
         <div className="field">
           <label htmlFor="st-recipients">Send to</label>
-          <textarea id="st-recipients" rows={2} style={{ minHeight: 60 }} value={recipients} onChange={(event) => setRecipients(event.target.value)} placeholder="eduvia.alif@gmail.com" />
+          <textarea id="st-recipients" rows={2} style={{ minHeight: 60 }} value={recipients} onChange={(event) => setRecipients(event.target.value)} placeholder="eqperintis.a@gmail.com" />
           <span className="hint">One address per line. Reply-To is the person who submitted.</span>
         </div>
       )}
