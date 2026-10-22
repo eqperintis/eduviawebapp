@@ -9,5 +9,9 @@ export async function register() {
   // reach the database.
   if (process.env.NEXT_PHASE === "phase-production-build") return;
   const { ensureDatabase } = await import("@/lib/migrate");
-  await ensureDatabase().catch((error) => console.error("[migrate] start-up migration failed", error));
+  await ensureDatabase().catch(async (error) => {
+    console.error("[migrate] start-up migration failed", error);
+    const { explainDatabaseFailure } = await import("@/lib/db-check");
+    console.error(`[migrate] database check: ${await explainDatabaseFailure()}`);
+  });
 }
