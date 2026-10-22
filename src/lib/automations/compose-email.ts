@@ -29,7 +29,7 @@ export function composeStepEmail(
       subject: fillText(step.subject || NOTIFY_SUBJECT, template),
       html: brandEmailHtml({
         bodyHtml: renderEmailBody(step.content || NOTIFY_BODY, template),
-        footer: "Sent by your Quolume automation.",
+        footer: "Sent by your Eduvia automation.",
       }),
     };
   }
@@ -39,7 +39,7 @@ export function composeStepEmail(
     subject: fillText(step.subject ?? "", template),
     html: brandEmailHtml({
       bodyHtml: renderEmailBody(step.content ?? "", template) + cta,
-      footer: "You're receiving this because you filled in a form on quolume.com.",
+      footer: "You're receiving this because you filled in a form on eduvia.my.",
       unsubscribeUrl,
     }),
   };

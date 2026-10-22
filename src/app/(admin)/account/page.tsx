@@ -61,7 +61,7 @@ export default async function AccountPage({
           ) : (
             <div className="notice warn stack-sm">
               <p>
-                Google isn&apos;t set up on the server yet. In hPanel → marketing.quolume.com → Node.js → Environment
+                Google isn&apos;t set up on the server yet. In hPanel → marketing.eduvia.my → Node.js → Environment
                 variables, add: <code>{missing.join(", ")}</code>.
               </p>
               <p>

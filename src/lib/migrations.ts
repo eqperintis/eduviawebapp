@@ -35,11 +35,11 @@ CREATE TABLE \`Form\` (
     \`redirectUrl\` VARCHAR(191) NOT NULL DEFAULT '',
     \`successTitle\` VARCHAR(191) NOT NULL DEFAULT 'Thank you.',
     \`successMessage\` TEXT NULL,
-    \`brandName\` VARCHAR(191) NOT NULL DEFAULT 'Quolume',
+    \`brandName\` VARCHAR(191) NOT NULL DEFAULT 'Eduvia',
     \`logoText\` VARCHAR(191) NOT NULL DEFAULT 'Q',
-    \`accentColor\` VARCHAR(191) NOT NULL DEFAULT '#4F46E5',
-    \`textColor\` VARCHAR(191) NOT NULL DEFAULT '#222222',
-    \`bgColor\` VARCHAR(191) NOT NULL DEFAULT '#F7F8F5',
+    \`accentColor\` VARCHAR(191) NOT NULL DEFAULT '#5EB4FF',
+    \`textColor\` VARCHAR(191) NOT NULL DEFAULT '#141A5E',
+    \`bgColor\` VARCHAR(191) NOT NULL DEFAULT '#F5F7FC',
     \`fontFamily\` VARCHAR(191) NOT NULL DEFAULT 'Geist',
     \`fields\` TEXT NULL,
     \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -184,7 +184,7 @@ ALTER TABLE \`AutomationEvent\` ADD CONSTRAINT \`AutomationEvent_runId_fkey\` FO
 `,
   },
   {
-    // The app is Quolume's alone, so forms no longer carry their own brand look.
+    // The app is Eduvia's alone, so forms no longer carry their own brand look.
     id: "0002_drop_form_brand",
     sql: `
 ALTER TABLE \`Form\` DROP COLUMN \`accentColor\`,

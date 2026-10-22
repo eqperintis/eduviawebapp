@@ -2,7 +2,7 @@ import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDatabase } from "@/lib/migrate";
 import { unsubscribeAction } from "@/lib/actions/unsubscribe";
-import { SITE_URL } from "@/lib/brand";
+import { BRAND, LOGO, SITE_URL } from "@/lib/brand";
 
 /**
  * The unsubscribe link in automation emails. It asks for a click rather than
@@ -21,9 +21,9 @@ export default async function UnsubscribePage({ params }: { params: Promise<{ to
   return (
     <div className="center">
       <div className="auth">
-        <a href={SITE_URL} aria-label="Quolume home" className="brand">
+        <a href={SITE_URL} aria-label="Eduvia home" className="brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/quolume-logo-horizontal.webp" alt="Quolume" width={176} height={40} />
+          <img src={LOGO.web} alt={BRAND.name} width={156} height={40} />
         </a>
         <div className="card stack">
           {!submission ? (
@@ -34,12 +34,12 @@ export default async function UnsubscribePage({ params }: { params: Promise<{ to
           ) : submission.emailOptOutAt ? (
             <>
               <h1>You&apos;re unsubscribed.</h1>
-              <p className="muted">{submission.email} won&apos;t get any more follow-up emails from Quolume.</p>
+              <p className="muted">{submission.email} won&apos;t get any more follow-up emails from Eduvia.</p>
             </>
           ) : (
             <form action={unsubscribeAction.bind(null, token)} className="stack">
               <h1>Unsubscribe?</h1>
-              <p className="muted">Stop follow-up emails from Quolume to {submission.email}.</p>
+              <p className="muted">Stop follow-up emails from Eduvia to {submission.email}.</p>
               <button className="btn" type="submit">Unsubscribe</button>
             </form>
           )}

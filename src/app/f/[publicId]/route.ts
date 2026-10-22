@@ -12,10 +12,10 @@ import { notifyOwner } from "@/lib/forms/notify";
 import { startAutomationRuns } from "@/lib/automations/engine";
 
 /**
- * The form endpoint, Formspree-style. quolume.com keeps its own form
+ * The form endpoint, Formspree-style. eduvia.my keeps its own form
  * and points it here:
  *
- *   <form action="https://marketing.quolume.com/f/<id>" method="POST">
+ *   <form action="https://marketing.eduvia.my/f/<id>" method="POST">
  *
  * or posts JSON with fetch(). Answers are stored, the owner is emailed, the
  * form's automations start, and the visitor is redirected (HTML) or gets

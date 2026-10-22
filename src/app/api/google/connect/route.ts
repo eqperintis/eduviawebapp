@@ -6,7 +6,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { buildGoogleAuthUrl } from "@/lib/google/oauth";
 
 // Checked in ../callback/route.ts.
-const STATE_COOKIE = "qm_google_state";
+const STATE_COOKIE = "edv_google_state";
 
 /** Sends the owner to Google to connect the account the Sheets step writes with. */
 export async function GET(): Promise<Response> {

@@ -12,7 +12,7 @@ export function AiPromptCard({ prompt }: { prompt: string }) {
         <p className="label">Use with AI assistants</p>
         <p className="muted">
           Working with AI? Copy this prompt into Claude, ChatGPT or Cursor and it can build the form into your site,
-          with the right endpoint, your fields and quolume.com&apos;s look.
+          with the right endpoint, your fields and eduvia.my&apos;s look.
         </p>
       </div>
       <div className={`code prompt${open ? " open" : ""}`}>

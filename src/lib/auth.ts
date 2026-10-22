@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 
-export const SESSION_COOKIE = "qm_session";
+export const SESSION_COOKIE = "edv_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7; // 7 days
 const alg = "HS256";
 

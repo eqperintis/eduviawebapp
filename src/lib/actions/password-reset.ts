@@ -51,13 +51,13 @@ export async function requestPasswordResetAction(_prev: FormState, formData: For
   const link = `${appUrl()}/reset-password/${token}`;
   const html = brandEmailHtml({
     bodyHtml:
-      `<p>Someone asked to reset the password for ${user.email} on Quolume Marketing.</p>` +
+      `<p>Someone asked to reset the password for ${user.email} on Eduvia Marketing.</p>` +
       buttonHtml(link, "Choose a new password") +
       `<p>The link works once, for one hour. If it wasn't you, ignore this email: your password stays as it is.</p>`,
     footer: "Sent because a password reset was requested for this address.",
   });
   // Not awaited: a slow send would otherwise make "has an account" measurably slower than "doesn't".
-  sendEmail({ to: user.email, subject: "Reset your Quolume Marketing password", html })
+  sendEmail({ to: user.email, subject: "Reset your Eduvia Marketing password", html })
     .then((result) => {
       if (result.status !== "sent") console.error("[password-reset] email not sent", result);
     })

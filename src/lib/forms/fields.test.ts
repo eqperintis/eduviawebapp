@@ -36,7 +36,7 @@ describe("who submitted", () => {
     expect(extractEmail({ work_email: "x@y.co" })).toBe("x@y.co");
     expect(extractEmail({ email: "not an email" })).toBe("");
     expect(extractName({ first_name: "Alif", last_name: "K" })).toBe("Alif K");
-    // What quolume.com's apply form sends.
+    // What a split name field sends.
     expect(extractName({ "First name": "Alif", "Last name": "K", email: "a@b.co" })).toBe("Alif K");
     expect(extractName({ fullName: "Alif K" })).toBe("Alif K");
     expect(labelFromKey("monthlyRevenue")).toBe("Monthly revenue");

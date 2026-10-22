@@ -51,13 +51,13 @@ export function SettingsForm({
               <input type="checkbox" name="notifyEnabled" defaultChecked={initial.notifyEnabled} />
               <span>Send a notification with the answers. Reply goes straight to the person.</span>
             </label>
-            <textarea name="notifyEmails" defaultValue={initial.notifyEmails} rows={2} style={{ minHeight: 60 }} placeholder="you@quolume.com" aria-label="Notification addresses" />
+            <textarea name="notifyEmails" defaultValue={initial.notifyEmails} rows={2} style={{ minHeight: 60 }} placeholder="you@eduvia.my" aria-label="Notification addresses" />
             <span className="hint">One address per line, or separated by commas.</span>
           </div>
 
           <div className="field full">
             <label htmlFor="s-domains">Only accept submissions from</label>
-            <textarea id="s-domains" name="allowedDomains" defaultValue={initial.allowedDomains} rows={2} style={{ minHeight: 60 }} placeholder="quolume.com" />
+            <textarea id="s-domains" name="allowedDomains" defaultValue={initial.allowedDomains} rows={2} style={{ minHeight: 60 }} placeholder="eduvia.my" />
             <span className="hint">
               Your site&apos;s domain, one per line (subdomains included). Leave empty to accept from anywhere. Blocks
               people copying your endpoint onto their own site.
@@ -76,7 +76,7 @@ export function SettingsForm({
 
           <div className="field full">
             <label htmlFor="s-redirect">After submitting, send people to</label>
-            <input id="s-redirect" name="redirectUrl" type="url" defaultValue={initial.redirectUrl} placeholder="https://quolume.com/thank-you" />
+            <input id="s-redirect" name="redirectUrl" type="url" defaultValue={initial.redirectUrl} placeholder="https://eduvia.my/thank-you" />
             <span className="hint">Optional. Leave empty to show the thank-you page below. An automation&apos;s Redirect step wins over this.</span>
           </div>
           <div className="field">

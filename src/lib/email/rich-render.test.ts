@@ -26,10 +26,10 @@ describe("renderRichEmail", () => {
   });
 
   it("keeps links, styled, and opens them in a new tab", () => {
-    const html = renderRichEmail('<p>Read <a href="https://quolume.com/guide" target="_blank" rel="noopener" class="x">the guide</a></p>', ctx);
-    expect(html).toContain('href="https://quolume.com/guide"');
+    const html = renderRichEmail('<p>Read <a href="https://eduvia.my/guide" target="_blank" rel="noopener" class="x">the guide</a></p>', ctx);
+    expect(html).toContain('href="https://eduvia.my/guide"');
     expect(html).toContain('target="_blank"');
-    expect(html).toContain('style="color:#4338CA;text-decoration:underline;"');
+    expect(html).toContain('style="color:#1F63C6;text-decoration:underline;"');
     expect(html).not.toMatch(/rel=|class=/);
   });
 
@@ -91,7 +91,7 @@ describe("rich-text helpers", () => {
   });
 
   it("normalizes typed links", () => {
-    expect(normalizeLink("quolume.com/apply")).toBe("https://quolume.com/apply");
+    expect(normalizeLink("eduvia.my/apply")).toBe("https://eduvia.my/apply");
     expect(normalizeLink("john.doe@gmail.com")).toBe("mailto:john.doe@gmail.com");
     expect(normalizeLink("https://x.co")).toBe("https://x.co");
     expect(normalizeLink("{{website}}")).toBe("{{website}}");

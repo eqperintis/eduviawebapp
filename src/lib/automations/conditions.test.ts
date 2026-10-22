@@ -112,7 +112,7 @@ describe("evaluateCondition — safety", () => {
 });
 
 describe("evaluateCondition — a field name typed in by the owner", () => {
-  // quolume.com sends "Monthly revenue" from a plain <select>, learned as text.
+  // A site sends "Monthly revenue" from a plain <select>, learned as text.
   const data = { "Monthly revenue": "Above RM300K" };
   const check = (operator: string, value: unknown) =>
     evaluateCondition({ field: "Monthly revenue", operator, value: JSON.stringify(value), triggerData: data });

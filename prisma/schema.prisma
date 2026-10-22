@@ -32,7 +32,7 @@ model PasswordResetToken {
   @@index([userId, createdAt])
 }
 
-// A Formspree-style endpoint. Quolume's own site keeps its own form HTML
+// A Formspree-style endpoint. eduvia.my keeps its own form HTML
 // and simply POSTs to /f/<publicId>.
 model Form {
   id   String @id @default(cuid())
@@ -51,12 +51,12 @@ model Form {
   notifyEmails  String? @db.Text
 
   // Only accept submissions sent from pages on these hosts (one per line,
-  // e.g. quolume.com). Empty means any site may post to it.
+  // e.g. eduvia.my). Empty means any site may post to it.
   allowedDomains String? @db.Text
 
   // Where a plain HTML form submit lands afterwards when no automation
   // redirects and no _next field is sent. Empty shows the hosted thank-you
-  // page, in the Quolume look.
+  // page, in the Eduvia look.
   redirectUrl    String  @default("")
   successTitle   String  @default("Thank you.")
   successMessage String? @db.Text

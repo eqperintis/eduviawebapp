@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Enquire · Eduvia</title></head>
+<body>
+  <form class="newsletter" action="/subscribe"><input name="newsletter_email" type="email"></form>
+
+  <form id="enquiry" method="POST" action="https://marketing.eduvia.my/f/eduvia-enquiry">
+    <label for="first_name">First name *</label>
+    <input id="first_name" name="first_name" required>
+    <label for="last_name">Last name</label>
+    <input id="last_name" name="last_name">
+    <label for="email">Email *</label>
+    <input id="email" name="email" type="email" required>
+
+    <label for="level">Student's level</label>
+    <select id="level" name="level">
+      <option value="Primary">Primary</option>
+      <option value="Lower secondary">Lower secondary</option>
+      <option value="Upper secondary">Upper secondary</option>
+      <option value="Pre-university">Pre-university</option>
+      <option value="University">University</option>
+    </select>
+
+    <label for="mode">How would you like to learn?</label>
+    <select id="mode" name="mode">
+      <option>Online</option>
+      <option>Home tuition</option>
+      <option>At a centre</option>
+    </select>
+
+    <label for="subject">Subject</label>
+    <input id="subject" name="subject" role="combobox" aria-controls="subject-list" autocomplete="off">
+    <ul id="subject-list" role="listbox">
+      <li role="option" data-value="Mathematics">Mathematics</li>
+      <li role="option" data-value="Science">Science</li>
+      <li role="option" data-value="English">English</li>
+      <li role="option" data-value="Bahasa Melayu">Bahasa Melayu</li>
+      <li role="option" data-value="Other">Other</li>
+      <li class="empty">No match. Choose Other.</li>
+    </ul>
+    <label for="subject_other">Other subject</label>
+    <input id="subject_other" name="subject_other">
+
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+  <script>/* posts to https://marketing.eduvia.my/f/eduvia-enquiry with fetch() */</script>
+</body>
+</html>

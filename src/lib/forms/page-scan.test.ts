@@ -4,36 +4,38 @@ import { describe, expect, it } from "vitest";
 import { mergeScannedFields, scanFormHtml } from "@/lib/forms/page-scan";
 import type { FieldDef } from "@/lib/forms/fields";
 
-const quolume = readFileSync(join(__dirname, "../../../../site/index.html"), "utf8");
+// A copy of an enquiry form as it might sit on eduvia.my, kept with the tests.
+const page = readFileSync(join(__dirname, "__fixtures__/enquiry-page.html"), "utf8");
 
 describe("scanFormHtml", () => {
-  it("reads every option of quolume.com's apply form", () => {
-    const fields = scanFormHtml(quolume, "quolume-apply", true);
+  it("reads every option of the enquiry form", () => {
+    const fields = scanFormHtml(page, "eduvia-enquiry", true);
     expect(fields).not.toBeNull();
     const byName = new Map(fields!.map((field) => [field.name, field]));
-    expect(byName.get("revenue")).toMatchObject({
-      label: "Monthly revenue",
+    expect(byName.get("level")).toMatchObject({
+      label: "Student's level",
       kind: "choice",
-      options: ["Below RM10K", "RM10K-RM30K", "RM30K-RM100K", "RM100K-RM300K", "Above RM300K"],
+      options: ["Primary", "Lower secondary", "Upper secondary", "Pre-university", "University"],
     });
-    expect(byName.get("team")?.options).toEqual(["Just me", "2-5", "6-15", "16-50", "50+"]);
-    const industry = byName.get("industry")!;
-    expect(industry.label).toBe("Industry");
-    expect(industry.options).toContain("Beauty & salon");
-    expect(industry.options).toContain("Other");
-    expect(industry.options).not.toContain("No match. Choose Other.");
+    expect(byName.get("mode")?.options).toEqual(["Online", "Home tuition", "At a centre"]);
+    expect(byName.has("newsletter_email")).toBe(false);
+    const subject = byName.get("subject")!;
+    expect(subject.label).toBe("Subject");
+    expect(subject.options).toContain("Bahasa Melayu");
+    expect(subject.options).toContain("Other");
+    expect(subject.options).not.toContain("No match. Choose Other.");
     expect(byName.get("first_name")?.label).toBe("First name");
     expect(byName.has("_gotcha")).toBe(false);
   });
 
   it("needs the page to mention the endpoint when strict", () => {
-    expect(scanFormHtml(quolume, "someone-else", true)).toBeNull();
+    expect(scanFormHtml(page, "someone-else", true)).toBeNull();
   });
 
   it("prefers the form whose action is the endpoint, and reads radio and checkbox groups", () => {
     const html = `
       <form action="/newsletter"><input name="email"></form>
-      <form action="https://marketing.quolume.com/f/abc123" method="POST">
+      <form action="https://marketing.eduvia.my/f/abc123" method="POST">
         <fieldset><legend>How did you hear about us?</legend>
           <label><input type="radio" name="source" value="Instagram"> Instagram</label>
           <label><input type="radio" name="source" value="Friend"> A friend</label>
@@ -61,28 +63,28 @@ describe("scanFormHtml", () => {
 });
 
 describe("mergeScannedFields", () => {
-  const scanned = scanFormHtml(quolume, "quolume-apply", true)!;
+  const scanned = scanFormHtml(page, "eduvia-enquiry", true)!;
 
   it("gives fields learned under their question's name every option, page order first", () => {
     const learned: FieldDef[] = [
-      { key: "Monthly revenue", label: "Monthly revenue", kind: "text", options: ["RM10K-RM30K", "Something old"] },
+      { key: "Student's level", label: "Student's level", kind: "text", options: ["Upper secondary", "Something old"] },
       { key: "First name", label: "First name", kind: "text", options: ["Aisyah"] },
     ];
     const merged = mergeScannedFields(learned, scanned)!;
-    expect(merged.find((field) => field.key === "Monthly revenue")?.options).toEqual([
-      "Below RM10K", "RM10K-RM30K", "RM30K-RM100K", "RM100K-RM300K", "Above RM300K", "Something old",
+    expect(merged.find((field) => field.key === "Student's level")?.options).toEqual([
+      "Primary", "Lower secondary", "Upper secondary", "Pre-university", "University", "Something old",
     ]);
     // Free text stays as learned; the kind isn't changed under a saved condition.
     expect(merged.find((field) => field.key === "First name")).toEqual(learned[1]);
-    expect(merged.find((field) => field.key === "Monthly revenue")?.kind).toBe("text");
+    expect(merged.find((field) => field.key === "Student's level")?.kind).toBe("text");
   });
 
   it("only adds questions the form hasn't sent when they have options", () => {
     const learned: FieldDef[] = [{ key: "email", label: "Email", kind: "email" }];
     const merged = mergeScannedFields(learned, scanned)!;
     const keys = merged.map((field) => field.key);
-    expect(keys).toContain("revenue");
-    expect(keys).not.toContain("industry_other");
+    expect(keys).toContain("mode");
+    expect(keys).not.toContain("subject_other");
     expect(keys).not.toContain("first_name");
   });
 

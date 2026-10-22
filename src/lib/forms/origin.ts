@@ -3,7 +3,7 @@
  * Free of server imports so it can be unit tested.
  */
 
-/** "https://www.Quolume.com/apply" → "quolume.com". Returns "" for junk. */
+/** "https://www.Eduvia.my/enquire" → "eduvia.my". Returns "" for junk. */
 export function normalizeHost(input: string): string {
   let value = input.trim().toLowerCase();
   if (!value) return "";
@@ -64,7 +64,7 @@ export function nextUrlAllowed(next: string, allowed: string[], fromHost: string
   return fromHost && host === fromHost ? url.toString() : null;
 }
 
-/** The page a submission came from, without its query or #hash: "https://quolume.com/apply". Null for junk. */
+/** The page a submission came from, without its query or #hash: "https://eduvia.my/enquire". Null for junk. */
 export function pageUrlFromReferrer(referrer: string | null | undefined): string | null {
   const url = httpUrl(referrer);
   if (!url || !normalizeHost(url.host)) return null;

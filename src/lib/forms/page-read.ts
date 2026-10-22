@@ -76,7 +76,7 @@ export async function fetchPublicPage(address: string): Promise<string> {
       response = await fetch(url, {
         redirect: "manual",
         signal: AbortSignal.timeout(TIMEOUT_MS),
-        headers: { Accept: "text/html", "User-Agent": "QuolumeMarketing/1.0 (+https://marketing.quolume.com)" },
+        headers: { Accept: "text/html", "User-Agent": "EduviaMarketing/1.0 (+https://marketing.eduvia.my)" },
       });
     } catch {
       throw new Error("The page didn't answer in time.");

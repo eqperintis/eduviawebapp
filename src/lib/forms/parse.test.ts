@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { collectEntries, parseSubmissionBody, wantsJson } from "./parse";
 
 function post(body: BodyInit, type: string, accept = "") {
-  return new Request("https://marketing.quolume.com/f/x", {
+  return new Request("https://marketing.eduvia.my/f/x", {
     method: "POST",
     body,
     headers: { "content-type": type, ...(accept ? { accept } : {}) },
@@ -12,10 +12,10 @@ function post(body: BodyInit, type: string, accept = "") {
 describe("parseSubmissionBody", () => {
   it("reads a plain HTML form, with repeated keys as a list", async () => {
     const { data, meta } = await parseSubmissionBody(
-      post("name=Alif&email=a%40b.co&interest=Ads&interest=SEO&_next=https%3A%2F%2Fquolume.com%2Fthanks", "application/x-www-form-urlencoded"),
+      post("name=Alif&email=a%40b.co&interest=Ads&interest=SEO&_next=https%3A%2F%2Feduvia.my%2Fthanks", "application/x-www-form-urlencoded"),
     );
     expect(data).toEqual({ name: "Alif", email: "a@b.co", interest: ["Ads", "SEO"] });
-    expect(meta.next).toBe("https://quolume.com/thanks");
+    expect(meta.next).toBe("https://eduvia.my/thanks");
   });
 
   it("reads JSON from fetch()", async () => {

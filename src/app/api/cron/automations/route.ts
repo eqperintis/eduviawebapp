@@ -5,7 +5,7 @@ import { advanceDueRuns } from "@/lib/automations/engine";
 /**
  * Advances automation runs whose Wait has passed. Hit by a Hostinger cron job
  * every few minutes:
- *   curl -s "https://marketing.quolume.com/api/cron/automations?secret=..."
+ *   curl -s "https://marketing.eduvia.my/api/cron/automations?secret=..."
  */
 
 export const dynamic = "force-dynamic";

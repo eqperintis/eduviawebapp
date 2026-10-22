@@ -35,7 +35,7 @@ export function escapeHtml(value: string): string {
 
 function fromHeader(fromName?: string): string {
   const email = process.env.EMAIL_FROM ?? "";
-  const name = (fromName || process.env.EMAIL_FROM_NAME || "Quolume").replace(/[<>"\r\n]/g, "");
+  const name = (fromName || process.env.EMAIL_FROM_NAME || "Eduvia").replace(/[<>"\r\n]/g, "");
   return email ? `${name} <${email}>` : name;
 }
 
@@ -190,7 +190,7 @@ async function sendViaHostingerApi(input: SendEmailInput): Promise<SendEmailResu
           to: [input.to],
           subject: input.subject,
           html: input.html,
-          displayName: (input.fromName || process.env.EMAIL_FROM_NAME || "Quolume").replace(/[<>"\r\n]/g, ""),
+          displayName: (input.fromName || process.env.EMAIL_FROM_NAME || "Eduvia").replace(/[<>"\r\n]/g, ""),
           attachments: input.attachments?.map((a) => ({
             filename: a.filename,
             content: a.content.toString("base64"),

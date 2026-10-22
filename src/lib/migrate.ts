@@ -10,11 +10,11 @@ import { pageUrlFromReferrer } from "@/lib/forms/origin";
 /**
  * Brings the database up to date on start-up: applies any migration not yet
  * recorded, then creates the first admin from ADMIN_EMAIL/ADMIN_PASSWORD and
- * the Quolume application form if the database is brand new. Safe to run on
+ * the Eduvia enquiry form if the database is brand new. Safe to run on
  * every start and from several processes at once (MySQL named lock).
  */
 
-const LOCK_NAME = "quolume_marketing_migrate";
+const LOCK_NAME = "eduvia_marketing_migrate";
 
 function splitStatements(sql: string): string[] {
   return sql
@@ -53,7 +53,7 @@ async function applyMigrations(tx: Tx): Promise<string[]> {
  */
 const DATA_JOBS: { id: string; run: (tx: Tx) => Promise<void> }[] = [
   {
-    // The first version gave the Quolume form a starter field list copied
+    // The first version gave the Quolume app's form a starter field list copied
     // from an old apply form. A form's fields must only ever be what it has
     // actually sent, so rebuild every form's list from its submissions.
     id: "0004_relearn_form_fields",
@@ -129,15 +129,15 @@ async function seed(tx: Tx): Promise<void> {
   if ((await tx.form.count()) === 0) {
     await tx.form.create({
       data: {
-        name: "Quolume: Apply to work with me",
-        publicId: "quolume-apply",
-        allowedDomains: "quolume.com",
+        name: "Eduvia: Enquiry",
+        publicId: "eduvia-enquiry",
+        allowedDomains: "eduvia.my",
         notifyEmails: process.env.ADMIN_EMAIL ?? "",
         successTitle: "Application received.",
         successMessage: "I'll read it and reply on WhatsApp.",
       },
     });
-    console.log("[migrate] created the Quolume application form");
+    console.log("[migrate] created the Eduvia enquiry form");
   }
 }
 

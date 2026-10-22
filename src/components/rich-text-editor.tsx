@@ -134,7 +134,7 @@ export function RichTextEditor({ editor }: { editor: Editor | null }) {
     if (!editor) return;
     const href = normalizeLink(linkUrl);
     if (!href) {
-      setLinkError("Enter a web address (quolume.com), an email address, or a {{variable}}.");
+      setLinkError("Enter a web address (eduvia.my), an email address, or a {{variable}}.");
       return;
     }
     const { from, to } = editor.state.selection;

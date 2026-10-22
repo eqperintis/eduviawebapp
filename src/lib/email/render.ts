@@ -1,10 +1,10 @@
-import { BRAND, brandAsset, escapeHtml, SITE_URL } from "@/lib/brand";
+import { BRAND, brandAsset, escapeHtml, LOGO, SITE_URL } from "@/lib/brand";
 import { displayValue, labelFromKey } from "@/lib/forms/fields";
 
 /**
  * Turns an automation step's plain text into the email that gets sent:
- * {{variables}} filled in, wrapped in the Quolume look (paper, ink, the
- * pencil logo). Pure, so it can be unit tested.
+ * {{variables}} filled in, wrapped in the Eduvia look (the message, then
+ * the logo). Pure, so it can be unit tested.
  */
 
 export type TemplateContext = {
@@ -51,7 +51,7 @@ export function answersTableHtml(ctx: TemplateContext): string {
   const rows = answerRows(ctx)
     .map(
       ([label, value]) =>
-        `<tr><td style="padding:10px 12px;border-top:1px dashed #D6D6D2;color:${BRAND.muted};font-size:13px;vertical-align:top;width:38%;">${escapeHtml(label)}</td><td style="padding:10px 12px;border-top:1px dashed #D6D6D2;color:${BRAND.ink};font-size:14px;white-space:pre-wrap;">${escapeHtml(value) || "&mdash;"}</td></tr>`,
+        `<tr><td style="padding:10px 12px;border-top:1px dashed #DCE2F2;color:${BRAND.muted};font-size:13px;vertical-align:top;width:38%;">${escapeHtml(label)}</td><td style="padding:10px 12px;border-top:1px dashed #DCE2F2;color:${BRAND.ink};font-size:14px;white-space:pre-wrap;">${escapeHtml(value) || "&mdash;"}</td></tr>`,
     )
     .join("");
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:${BRAND.bg};border-radius:10px;margin:8px 0 16px;">${rows}</table>`;
@@ -75,7 +75,7 @@ export function fillHtml(text: string, ctx: TemplateContext): string {
 }
 
 export function buttonHtml(url: string, label: string): string {
-  return `<p style="margin:24px 0;"><a href="${escapeHtml(url)}" style="display:inline-block;background:${BRAND.ink};color:${BRAND.onInk};text-decoration:none;font-weight:600;padding:14px 22px;border-radius:14px;">${escapeHtml(label)} &rarr;</a></p>`;
+  return `<p style="margin:24px 0;"><a href="${escapeHtml(url)}" style="display:inline-block;background:${BRAND.ink};color:${BRAND.onInk};text-decoration:none;font-weight:600;padding:14px 24px;border-radius:999px;">${escapeHtml(label)} &rarr;</a></p>`;
 }
 
 export function brandEmailHtml(args: {
@@ -95,10 +95,10 @@ export function brandEmailHtml(args: {
 <body style="margin:0;padding:0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px;font-family:${font};">
 <tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${BRAND.paper};border:1.5px solid ${BRAND.ink};border-radius:16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${BRAND.paper};border:1.5px solid #D5DBEE;border-radius:18px;">
 <tr><td style="padding:28px 28px 8px;color:${BRAND.ink};font-size:15px;line-height:1.6;">${args.bodyHtml}</td></tr>
-<tr><td style="padding:0 28px;"><div style="border-top:1.5px dashed #D6D6D2;font-size:0;line-height:0;">&nbsp;</div></td></tr>
-<tr><td style="padding:20px 28px 8px;"><a href="${SITE_URL}"><img src="${escapeHtml(brandAsset("quolume-logo-email.png"))}" alt="Quolume" width="130" height="30" style="display:block;border:0;height:30px;width:auto;"></a></td></tr>
-<tr><td style="padding:4px 28px 24px;color:${BRAND.muted};font-size:12px;line-height:1.5;">${args.footer ? escapeHtml(args.footer) : ""}${unsubscribe}<br>The long way is the shortcut. &middot; Quolume by Alif</td></tr>
+<tr><td style="padding:0 28px;"><div style="border-top:1.5px dashed #D5DBEE;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+<tr><td style="padding:20px 28px 8px;"><a href="${SITE_URL}"><img src="${escapeHtml(brandAsset(LOGO.email))}" alt="${BRAND.name}" width="${LOGO.emailWidth}" height="${LOGO.emailHeight}" style="display:block;border:0;height:${LOGO.emailHeight}px;width:auto;"></a></td></tr>
+<tr><td style="padding:4px 28px 24px;color:${BRAND.muted};font-size:12px;line-height:1.5;">${args.footer ? escapeHtml(args.footer) : ""}${unsubscribe}<br>${escapeHtml(BRAND.footerLine)}</td></tr>
 </table></td></tr></table></body></html>`;
 }

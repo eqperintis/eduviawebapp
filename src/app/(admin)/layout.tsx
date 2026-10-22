@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { ensureDatabase } from "@/lib/migrate";
 import { logoutAction } from "@/lib/actions/auth";
 import { Nav } from "@/components/nav";
+import { BRAND, LOGO } from "@/lib/brand";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Request-time only: never prerendered at build, where there is no database.
@@ -14,9 +15,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <>
       <header className="top">
         <div className="wrap">
-          <Link className="brand" href="/forms" aria-label="Quolume Marketing home">
+          <Link className="brand" href="/forms" aria-label="Eduvia Marketing home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/quolume-logo-horizontal.webp" alt="Quolume" width={150} height={34} />
+            <img src={LOGO.web} alt={BRAND.name} width={LOGO.webWidth} height={LOGO.webHeight} />
             <small>Marketing</small>
           </Link>
           <Nav />

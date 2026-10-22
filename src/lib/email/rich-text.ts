@@ -43,7 +43,7 @@ export function richTextIsEmpty(html: string): boolean {
 }
 
 /**
- * What a typed link becomes: "quolume.com" → "https://quolume.com". Keeps
+ * What a typed link becomes: "eduvia.my" → "https://eduvia.my". Keeps
  * mailto:, tel: and {{variables}}; anything else (javascript: and friends)
  * is refused with null.
  */

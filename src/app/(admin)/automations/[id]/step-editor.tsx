@@ -114,7 +114,7 @@ export function StepEditor({ node, nodes, trigger, onDone, onDeleted, onClose, g
       {node.type === "notify" && (
         <div className="field">
           <label htmlFor="st-recipients">Send to</label>
-          <textarea id="st-recipients" rows={2} style={{ minHeight: 60 }} value={recipients} onChange={(event) => setRecipients(event.target.value)} placeholder="sales@quolume.com" />
+          <textarea id="st-recipients" rows={2} style={{ minHeight: 60 }} value={recipients} onChange={(event) => setRecipients(event.target.value)} placeholder="hello@eduvia.my" />
           <span className="hint">One address per line. Reply-To is the person who submitted.</span>
         </div>
       )}
@@ -163,7 +163,7 @@ export function StepEditor({ node, nodes, trigger, onDone, onDeleted, onClose, g
         <>
           <div className="field">
             <label htmlFor="st-url">Send them to</label>
-            <input id="st-url" type="url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://quolume.com/next-step" />
+            <input id="st-url" type="url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://eduvia.my/next-step" />
           </div>
           {reachedAtSubmit(nodes, node.parentId) ? (
             <p className="notice">Happens the moment they submit. Put it under a Condition to send different answers to different pages.</p>
@@ -645,7 +645,7 @@ function EmailBody({
     <div className="field">
       <span className="field-label">Email</span>
       <RichTextEditor editor={editor} />
-      <span className="hint">Sent in the Quolume look, with the logo. Select words, then use the link button to link them.</span>
+      <span className="hint">Sent in the Eduvia look, with the logo. Select words, then use the link button to link them.</span>
       <div className="stack-sm">
         <span className="hint">Insert from the form:</span>
         <div className="chips">

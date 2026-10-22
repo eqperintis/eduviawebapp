@@ -6,7 +6,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { ensureDatabase } from "@/lib/migrate";
 import { exchangeCodeForTokens } from "@/lib/google/oauth";
 
-const STATE_COOKIE = "qm_google_state";
+const STATE_COOKIE = "edv_google_state";
 
 function sameState(a: string | null | undefined, b: string | null | undefined): boolean {
   if (!a || !b) return false;

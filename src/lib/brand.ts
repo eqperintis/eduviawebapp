@@ -1,32 +1,61 @@
 /**
- * The Quolume brand, as on quolume.com: a sketchbook page. Paper background
- * with a faint grain, white cards outlined in wobbly pencil lines, near-black
- * ink for text and buttons, and indigo used only as the "pen" for labels,
- * highlights and scribbles. No glows or gradients. The logo, fonts and pencil
- * card outlines are the site's own files, copied into public/brand/.
+ * The Eduvia brand, taken from its logo: navy ink for text and buttons, gold
+ * as the highlight (the logo's chevron), sky blue for links and labels (the
+ * logo's square), on a soft cool-white page with white rounded cards.
+ * Headings use Claston, the logo's own typeface; body text uses Plus Jakarta
+ * Sans. The logo, fonts and icons are in public/brand/.
  * Free of server imports.
  */
 
 export const BRAND = {
-  name: "Quolume",
-  bg: "#F7F8F5",
+  name: "Eduvia",
+  /** The app's own name, in titles and emails. */
+  appName: "Eduvia Marketing",
+  /** The last line under every email. */
+  footerLine: "Eduvia by Alif",
+  bg: "#F5F7FC",
   paper: "#FFFFFF",
-  paper2: "#EFEFEA",
-  ink: "#222222",
-  muted: "#5F5D5A",
-  line: "rgba(34, 34, 34, 0.82)",
-  lineSoft: "rgba(34, 34, 34, 0.32)",
-  rule: "rgba(34, 34, 34, 0.14)",
-  accent: "#4F46E5",
-  accentInk: "#4338CA",
-  accentSoft: "rgba(79, 70, 229, 0.10)",
-  onInk: "#F7F8F5",
+  paper2: "#EDF1FA",
+  ink: "#141A5E",
+  muted: "#545A80",
+  line: "rgba(20, 26, 94, 0.82)",
+  lineSoft: "rgba(20, 26, 94, 0.22)",
+  rule: "rgba(20, 26, 94, 0.10)",
+  gold: "#EBC35C",
+  goldSoft: "rgba(235, 195, 92, 0.28)",
+  sky: "#5EB4FF",
+  accent: "#5EB4FF",
+  /** Sky blue dark enough to read as text on white. */
+  accentInk: "#1F63C6",
+  accentSoft: "rgba(94, 180, 255, 0.14)",
+  onInk: "#FFFFFF",
+  display: `"Claston", "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif`,
   sans: `"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif`,
   mono: `"Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace`,
 } as const;
 
-/** quolume.com itself, where the pencil card outlines also live. */
-export const SITE_URL = "https://quolume.com";
+/** eduvia.my itself, where the forms live. */
+export const SITE_URL = "https://eduvia.my";
+export const SITE_HOST = "eduvia.my";
+
+/** The logo files in public/brand/. */
+export const LOGO = {
+  /** On the app's own pages. */
+  web: "/brand/eduvia-logo.svg",
+  /** The logo is 3.89 times as wide as it is tall. */
+  webWidth: 140,
+  webHeight: 36,
+  /** In emails: a PNG, since Gmail and Outlook don't show SVG. */
+  email: "eduvia-logo-email.png",
+  emailWidth: 117,
+  emailHeight: 30,
+} as const;
+
+/** The @font-face rules for the brand fonts in public/brand/fonts/. */
+export const BRAND_FONT_FACES = `@font-face { font-family: "Claston"; font-style: normal; font-weight: 400 800; font-display: swap; src: url("/brand/fonts/claston.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-weight: 400 800; font-display: swap; src: url("/brand/fonts/plus-jakarta-sans.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: italic; font-weight: 600; font-display: swap; src: url("/brand/fonts/plus-jakarta-sans-italic-600.woff2") format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/brand/fonts/geist-mono.woff2") format("woff2"); }`;
 
 export function appUrl(): string {
   return (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -36,18 +65,6 @@ export function appUrl(): string {
 export function brandAsset(path: string): string {
   return `${appUrl()}/brand/${path}`;
 }
-
-/** The paper grain from quolume.com, as a CSS background-image value. */
-export const PAPER_GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .2 0 0 0 -.07'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`;
-
-/**
- * The SVG filters that turn a straight line into a pencil stroke (from
- * quolume.com). Put once in <body>; CSS uses filter: url(#rough) etc.
- */
-export const PENCIL_FILTERS = `<svg class="filters" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
-<filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="3" result="warp"/><feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G" result="wobbly"/><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="1" seed="9" result="grain"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.6 0 0 0 -0.45" result="mask"/><feComposite in="wobbly" in2="mask" operator="in"/></filter>
-<filter id="rough-line" x="-30%" y="-40%" width="160%" height="180%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="5" result="warp"/><feDisplacementMap in="SourceGraphic" in2="warp" scale="3" xChannelSelector="R" yChannelSelector="G" result="wobbly"/><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="1" seed="9" result="grain"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.6 0 0 0 -0.45" result="mask"/><feComposite in="wobbly" in2="mask" operator="in"/></filter>
-</svg>`;
 
 export function escapeHtml(value: string): string {
   return value

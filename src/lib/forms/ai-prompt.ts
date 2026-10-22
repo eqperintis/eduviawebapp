@@ -2,9 +2,9 @@ import type { FieldDef } from "@/lib/forms/fields";
 
 /**
  * A prompt the owner pastes into an AI assistant (Claude, ChatGPT, Cursor…)
- * so it can wire this form into a Quolume page. Like Formspree's, but
+ * so it can wire this form into an Eduvia page. Like Formspree's, but
  * specific to this app: the real endpoint, the fields the form already
- * sends, quolume.com's look, and how the endpoint answers.
+ * sends, eduvia.my's look, and how the endpoint answers.
  */
 
 function fieldLine(field: FieldDef): string {
@@ -53,12 +53,13 @@ ${fieldsSection}
 
 # Look
 
-It goes on quolume.com, so match quolume.com's apply form exactly. If the page already has the site's CSS, reuse its classes (\`.field\`, \`.btn\`, the pencil-outlined \`form\`). Otherwise the look is a sketchbook page:
-- Font "Plus Jakarta Sans" (self-hosted at /assets/fonts/plus-jakarta-sans.woff2), labels 13px semibold above inputs.
-- The form is a white card on the #F7F8F5 paper background, outlined in a pencil line: \`border-image: url("/assets/sketch-card.webp") 80 / 40px / 12px round\` on a \`::after\` with a 28px transparent border.
-- Inputs: background #F7F8F5, 1.4px solid rgba(34,34,34,.32) border, 10px radius, 12px 14px padding; focus ring 2px #4338CA.
-- Submit button: #222222 background, #F7F8F5 text, 14px radius, with a 1.4px pencil outline drawn by the page's \`filter: url(#rough)\` SVG filter, and a mono "→" after the label.
-- Indigo (#4F46E5) is only the "pen": labels, highlights, error box. No gradients, glows or drop shadows.
+It goes on eduvia.my, so it must look like the rest of that site. If the page already has the site's CSS, reuse its classes and fonts. Otherwise use the Eduvia look, taken from its logo:
+- Headings in "Claston" (the logo's typeface, if the site already loads it), everything else in "Plus Jakarta Sans" (Google Fonts). Labels 14px semibold above inputs.
+- The form is a white card (#FFFFFF) on a #F5F7FC page, 22px radius, 1px solid rgba(20,26,94,.10) border, soft shadow \`0 8px 24px rgba(20,26,94,.06)\`, and a 6px gold (#EBC35C) strip along its top edge.
+- Text is navy #141A5E; secondary text #545A80.
+- Inputs: white, 1.5px solid rgba(20,26,94,.22) border, 12px radius, 12px 14px padding; on focus the border turns sky blue #5EB4FF with a 3px rgba(94,180,255,.14) ring.
+- Submit button: a navy (#141A5E) pill with white text, 999px radius, 1em 1.5em padding, "→" after the label; hover #222A7A.
+- Gold #EBC35C is for highlights only (the strip, selected options); sky blue #5EB4FF for focus and small accents; dark blue #1F63C6 for links. Errors: #B42318 on #FDECEA.
 
 ---
 

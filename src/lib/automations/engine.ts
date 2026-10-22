@@ -214,7 +214,7 @@ async function runWebhook(node: AutomationNode, ctx: RunContext): Promise<void> 
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "User-Agent": "Quolume-Marketing/1.0" },
+      headers: { "Content-Type": "application/json", "User-Agent": "Eduvia-Marketing/1.0" },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
       redirect: "manual",

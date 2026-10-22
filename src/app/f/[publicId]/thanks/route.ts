@@ -3,7 +3,7 @@ import { ensureDatabase } from "@/lib/migrate";
 import { httpUrl } from "@/lib/forms/origin";
 import { brandPage } from "@/lib/forms/pages";
 
-/** The hosted thank-you page a plain HTML form lands on, in the Quolume look. */
+/** The hosted thank-you page a plain HTML form lands on, in the Eduvia look. */
 
 export const dynamic = "force-dynamic";
 

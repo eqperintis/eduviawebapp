@@ -2,19 +2,20 @@ import { describe, expect, it } from "vitest";
 import { buildAiPrompt } from "./ai-prompt";
 
 describe("buildAiPrompt", () => {
-  const endpoint = "https://marketing.quolume.com/f/quolume-apply";
+  const endpoint = "https://marketing.eduvia.my/f/eduvia-enquiry";
 
-  it("carries the endpoint, the known fields, the Quolume look and the domain lock", () => {
+  it("carries the endpoint, the known fields, the Eduvia look and the domain lock", () => {
     const prompt = buildAiPrompt({
       endpoint,
       formName: "Apply",
       fields: [{ key: "revenue", label: "Monthly revenue", kind: "choice", options: ["Below RM10K", "Above RM300K"] }],
-      allowedDomains: ["quolume.com"],
+      allowedDomains: ["eduvia.my"],
     });
     expect(prompt).toContain(endpoint);
     expect(prompt).toContain('`revenue`: Monthly revenue (pick one: "Below RM10K", "Above RM300K")');
-    expect(prompt).toContain("Plus Jakarta Sans");
-    expect(prompt).toContain("only accepts submissions sent from pages on: quolume.com");
+    expect(prompt).toContain("Claston");
+    expect(prompt).toContain("#141A5E");
+    expect(prompt).toContain("only accepts submissions sent from pages on: eduvia.my");
     expect(prompt).toContain("# React");
   });
 

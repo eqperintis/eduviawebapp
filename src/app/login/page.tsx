@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   if (await getAuthenticatedUser()) redirect("/forms");
   const { reset } = await searchParams;
   return (
-    <AuthShell title="Sign in" intro="Forms and automations for quolume.com.">
+    <AuthShell title="Sign in" intro="Forms and automations for eduvia.my.">
       {reset === "1" && (
         <p className="notice ok" role="status">
           Password changed. Sign in with the new one.
