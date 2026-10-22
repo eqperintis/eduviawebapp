@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// MySQL/MariaDB, same as SEKOOL on Hostinger. The tables are created by the
+// app itself on start-up (see src/lib/migrate.ts): Hostinger's build
+// container can't reach the database, so `prisma migrate deploy` can't run
+// as part of a deploy.
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id           String               @id @default(cuid())
+  email        String               @unique
+  passwordHash String
+  createdAt    DateTime             @default(now())
+  resetTokens  PasswordResetToken[]
+}
+
+// A "forgot password" link. Only the SHA-256 of the token is stored, so a
+// database leak can't be turned into a password reset.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// A Formspree-style endpoint. Quolume's own site keeps its own form HTML
+// and simply POSTs to /f/<publicId>.
+model Form {
+  id   String @id @default(cuid())
+  name String
+
+  // The public address: /f/<publicId>. Random, so endpoints can't be guessed
+  // by counting.
+  publicId String @unique
+
+  // "active" | "paused". A paused form rejects new submissions.
+  status String @default("active")
+
+  // Email the owner on every submission. One address per line or
+  // comma-separated.
+  notifyEnabled Boolean @default(true)
+  notifyEmails  String? @db.Text
+
+  // Only accept submissions sent from pages on these hosts (one per line,
+  // e.g. quolume.com). Empty means any site may post to it.
+  allowedDomains String? @db.Text
+
+  // Where a plain HTML form submit lands afterwards when no automation
+  // redirects and no _next field is sent. Empty shows the hosted thank-you
+  // page, in the Quolume look.
+  redirectUrl    String  @default("")
+  successTitle   String  @default("Thank you.")
+  successMessage String? @db.Text
+
+  // The fields this form is known to send, JSON:
+  // [{ key, label, kind, options? }]. Learned automatically from
+  // submissions (a new key is added as a text field) and editable, so
+  // automation conditions can offer the right operators.
+  fields String? @db.Text
+
+  // The page the form lives on. Read now and then for every option its
+  // dropdowns, radios and pick-lists offer (not just the ones chosen so
+  // far). Taken from where submissions come from, unless set by hand.
+  pageUrl       String?   @db.VarChar(500)
+  pageUrlManual Boolean   @default(false)
+  pageScannedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions FormSubmission[]
+  triggers    AutomationTrigger[]
+}
+
+model FormSubmission {
+  id     String @id @default(cuid())
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  // The answers, JSON-encoded as { fieldKey: value }.
+  data String @db.Text
+
+  // Lifted out of `data` so automations can email the person and the list
+  // can show who submitted without parsing every row.
+  email String @default("")
+  name  String @default("")
+
+  // Where it came from.
+  referrer  String @default("") @db.VarChar(500)
+  ip        String @default("")
+  userAgent String @default("") @db.VarChar(500)
+
+  // Marketing opt-out for automation emails sent to this person.
+  emailOptOutToken String?   @unique
+  emailOptOutAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  automationRuns AutomationRun[]
+
+  @@index([formId, createdAt])
+}
+
+model Automation {
+  id   String @id @default(cuid())
+  name String
+
+  // "draft" | "active" | "paused"
+  status String @default("draft")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  triggers AutomationTrigger[]
+  nodes    AutomationNode[]
+  runs     AutomationRun[]
+}
+
+// Which forms start an automation. One automation can listen to several.
+model AutomationTrigger {
+  id           String     @id @default(cuid())
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  formId       String
+  form         Form       @relation(fields: [formId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([automationId, formId])
+  @@index([formId])
+}
+
+// The flow is a tree, same shape as SEKOOL: one "trigger" root, every other
+// node hangs off a parent's output ("main", "main:1"... or a condition's
+// "yes"/"no").
+model AutomationNode {
+  id           String     @id @default(cuid())
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  // "trigger" | "condition" | "wait" | "send_email" | "notify" | "redirect" | "webhook" | "google_sheets"
+  type String
+
+  parentId String?
+  parent   AutomationNode?  @relation("AutomationNodeChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children AutomationNode[] @relation("AutomationNodeChildren")
+  branch   String           @default("main")
+
+  // send_email (to the person who submitted) / notify (to fixed addresses
+  // in `recipients`).
+  recipients String? @db.Text
+  subject    String?
+  content    String? @db.Text
+  ctaLabel   String?
+
+  // redirect: where to send the person. webhook: where to POST. send_email:
+  // the button link. google_sheets: the spreadsheet's URL (its name is kept
+  // in `subject`, the tab in `ctaLabel`).
+  url String? @db.Text
+
+  // wait: always minutes; the UI picks minutes/hours/days.
+  delayMinutes Int?
+
+  // condition: a field key from the trigger forms, an operator, and a
+  // JSON-encoded operand.
+  conditionField    String?
+  conditionOperator String?
+  conditionValue    String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([automationId])
+  @@index([parentId, branch])
+}
+
+model AutomationRun {
+  id           String     @id @default(cuid())
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  submissionId String?
+  submission   FormSubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+
+  email String
+  name  String @default("")
+
+  // The submission's answers, snapshotted so a condition on day 3 sees what
+  // was sent on day 1.
+  triggerData String @db.Text
+
+  // "active" | "completed" | "stopped" | "failed"
+  status String @default("active")
+
+  currentNodeId String?
+  nextRunAt     DateTime?
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  updatedAt DateTime  @updatedAt
+
+  events AutomationEvent[]
+
+  @@index([status, nextRunAt])
+  @@index([automationId, startedAt])
+}
+
+// What a run did, step by step, so the owner can see why someone got (or
+// didn't get) an email.
+model AutomationEvent {
+  id     String        @id @default(cuid())
+  runId  String
+  run    AutomationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  nodeId String?
+
+  // "ok" | "skipped" | "failed"
+  status  String @default("ok")
+  message String @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([runId, createdAt])
+}
+
+model RateLimitBucket {
+  key         String   @id @db.VarChar(191)
+  count       Int      @default(1)
+  windowStart DateTime
+
+  @@index([windowStart])
+}
+
+// One Google account connected for the whole app (a single "default" row,
+// as in SEKOOL), used by the Google Sheets automation step. The scopes are
+// spreadsheets + drive.file: with the Google Picker, the app can only open
+// files the owner picks, never the rest of their Drive.
+model GoogleIntegration {
+  id String @id @default("default")
+
+  connectedEmail       String?
+  refreshToken         String?   @db.Text
+  accessToken          String?   @db.Text
+  accessTokenExpiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
