@@ -14,15 +14,18 @@ The app creates its own tables the first time it starts. Don't run any Prisma mi
 
 ## 2. The Node.js app
 
-1. hPanel → **Websites** → **Add website** → **Node.js app** → **Import Git repository**.
-2. Pick the GitHub repo `eqperintis/eduviawebapp` and the branch you deploy from (merge `claude/new-session-bm3tqj` into `main` first, then pick `main`).
-3. Settings:
+1. On GitHub, the repo only has the branch `claude/new-session-bm3tqj`. Make a `main` branch from it: open the repo, click the branch menu, type `main`, choose **Create branch: main from claude/new-session-bm3tqj**. Then **Settings** → **General** → **Default branch** → switch to `main`.
+2. hPanel → **Websites** → **Add website** → **Node.js Web App** → **Import Git repository**.
+3. **Connect with GitHub** (first time only): sign in as `eqperintis`, install the Hostinger app and give it access to `eduviawebapp`.
+4. Pick `eqperintis/eduviawebapp`, branch `main`, domain **marketing.eduvia.my**.
+5. Build settings:
    - Framework: **Next.js**
    - Node version: **22**
-   - Root directory: `/` (the app is at the top of the repo)
+   - Root directory: `./` (the app is at the top of the repo)
    - Build command: `npm run hostinger-build`
-   - Turn on **auto-deploy** on push.
-4. Domain: **marketing.eduvia.my**. Hostinger adds the DNS record if eduvia.my's DNS is on Hostinger; otherwise add the record it shows you. Turn on SSL (free Let's Encrypt).
+   - Package manager: **npm**
+6. Enter the environment variables from step 3 on the same screen, then **Deploy**. Pushes to `main` deploy again by themselves.
+7. Websites → marketing.eduvia.my → **Security** → **SSL**: make sure it's active (free Let's Encrypt).
 
 ## 3. Environment variables
 
