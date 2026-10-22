@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           <h1>How Eduvia handles your information</h1>
           <p>
             This covers the forms on eduvia.my and marketing.eduvia.my, the tool Eduvia uses to receive and follow
-            up on them. Eduvia is run by Alif.
+            up on them.
           </p>
 
           <h2>What we collect</h2>

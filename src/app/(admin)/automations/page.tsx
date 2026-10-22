@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { deleteAutomationsAction, setAutomationsStatusAction } from "@/lib/actions/automations";
 import { BulkSelection, RowCheck, SelectAll } from "@/components/bulk-selection";
 import { ConfirmButton } from "@/components/confirm-button";
+import { DuplicateAutomationButton } from "@/components/duplicate-buttons";
 import { NewAutomationButton } from "./new-automation-button";
 
 export const metadata = { title: "Automations" };
@@ -95,11 +96,14 @@ export default async function AutomationsPage() {
                     <td className="mono">{Math.max(0, automation._count.nodes - 1)}</td>
                     <td className="mono">{automation._count.runs}</td>
                     <td className="row-actions">
+                      <div className="row-buttons">
+                      <DuplicateAutomationButton automation={automation} />
                       <ConfirmButton
                         action={deleteAutomationsAction.bind(null, [automation.id])}
                         label="Delete"
                         confirm={`Delete “${automation.name}” and its run history? This can't be undone.`}
                       />
+                      </div>
                     </td>
                   </tr>
                 ))}

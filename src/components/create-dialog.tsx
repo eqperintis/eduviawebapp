@@ -8,7 +8,8 @@ import { FormMessage } from "@/components/form-message";
 /**
  * How everything new is created in this app, like Formspree's "+ Add New":
  * a button first, and only after pressing it a small dialog asking for a
- * name. Nothing sits on the page waiting to be typed into.
+ * name. Nothing sits on the page waiting to be typed into. Duplicate uses
+ * it too, with the name filled in as "Copy of …".
  */
 export function CreateDialog({
   buttonLabel,
@@ -18,6 +19,8 @@ export function CreateDialog({
   action,
   children,
   buttonClassName = "btn",
+  buttonIcon = "+",
+  initialName = "",
 }: {
   buttonLabel: string;
   title: string;
@@ -27,15 +30,19 @@ export function CreateDialog({
   /** Extra inputs under the name, e.g. which forms start an automation. */
   children?: React.ReactNode;
   buttonClassName?: string;
+  /** Shown before the button label; null for none. */
+  buttonIcon?: string | null;
+  /** What the name starts as, e.g. "Copy of Enquiry". Selected on open, so typing replaces it. */
+  initialName?: string;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputId = useId();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialName);
   const [state, submit, pending] = useFormAction(action);
 
   const close = () => {
     dialogRef.current?.close();
-    setName("");
+    setName(initialName);
   };
 
   return (
@@ -45,10 +52,12 @@ export function CreateDialog({
         className={buttonClassName}
         onClick={() => {
           dialogRef.current?.showModal();
-          document.getElementById(inputId)?.focus();
+          const input = document.getElementById(inputId) as HTMLInputElement | null;
+          input?.focus();
+          input?.select();
         }}
       >
-        <span aria-hidden="true">+</span> {buttonLabel}
+        {buttonIcon && <span aria-hidden="true">{buttonIcon}</span>} {buttonLabel}
       </button>
       <dialog
         ref={dialogRef}
@@ -58,7 +67,7 @@ export function CreateDialog({
           // A click on the backdrop (the dialog itself, outside the card) closes it.
           if (event.target === dialogRef.current) close();
         }}
-        onClose={() => setName("")}
+        onClose={() => setName(initialName)}
       >
         <form onSubmit={submit} className="card stack">
           <h2>{title}</h2>

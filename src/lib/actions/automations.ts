@@ -13,6 +13,7 @@ import { extractSpreadsheetId } from "@/lib/google/sheets";
 import { parseColumns } from "@/lib/automations/sheet-columns";
 import { richTextIsEmpty } from "@/lib/email/rich-text";
 import { composeStepEmail } from "@/lib/automations/compose-email";
+import { copyAutomation } from "@/lib/automations/duplicate";
 import { sendEmail } from "@/lib/email/send";
 import type { TemplateContext } from "@/lib/email/render";
 import { formatKL } from "@/lib/tz";
@@ -59,6 +60,19 @@ export async function createAutomationAction(_prev: FormState, formData: FormDat
   });
   await setTriggers(automation.id, formIds);
   redirect(`/automations/${automation.id}`);
+}
+
+/** Copies the whole flow under a new name, started by the same forms. The copy is a draft. */
+export async function duplicateAutomationAction(automationId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return { error: "Give the copy a name." };
+  const source = await db.automation.findUnique({ where: { id: automationId }, include: { triggers: { select: { formId: true } } } });
+  if (!source) return { error: "That automation no longer exists." };
+
+  const id = await db.$transaction((tx) => copyAutomation(tx, source.id, name, source.triggers.map((trigger) => trigger.formId)));
+  revalidatePath("/automations");
+  redirect(`/automations/${id}`);
 }
 
 export async function updateAutomationAction(
@@ -167,7 +181,7 @@ export async function addStepAction(
         branch,
         ...(type === "wait" ? { delayMinutes: 60 * 24 } : {}),
         ...(type === "notify" ? { subject: "New submission: {{form_name}}", content: "<p>{{name}} just filled in {{form_name}}.</p><p>{{answers}}</p>" } : {}),
-        ...(type === "send_email" ? { subject: "Thanks, {{name}}", content: "<p>Hi {{name}},</p><p>Thanks for filling in the form. I'll get back to you soon.</p><p>Alif</p>" } : {}),
+        ...(type === "send_email" ? { subject: "Thanks, {{name}}", content: "<p>Hi {{name}},</p><p>Thanks for filling in the form. We'll get back to you soon.</p><p>Eduvia</p>" } : {}),
       },
     });
     if (existing) {

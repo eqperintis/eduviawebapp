@@ -14,6 +14,7 @@ import { ConfirmButton } from "@/components/confirm-button";
 import { SubmissionsChart, type DayCount } from "@/components/submissions-chart";
 import { NewAutomationButton } from "../../automations/new-automation-button";
 import { SettingsForm } from "./settings-form";
+import { DuplicateFormButton } from "@/components/duplicate-buttons";
 
 // Formspree's layout: a form is just an endpoint, with nothing to set up.
 const TABS = [
@@ -67,9 +68,12 @@ export default async function FormPage({
         </p>
         <div className="spread">
           <h1>{form.name}</h1>
-          <span className={`pill ${form.status === "active" ? "ok" : "warn"}`}>
-            {form.status === "active" ? "Taking submissions" : "Paused"}
-          </span>
+          <div className="row">
+            <span className={`pill ${form.status === "active" ? "ok" : "warn"}`}>
+              {form.status === "active" ? "Taking submissions" : "Paused"}
+            </span>
+            <DuplicateFormButton form={{ id: form.id, name: form.name }} automationCount={form.triggers.length} />
+          </div>
         </div>
       </div>
 

@@ -143,6 +143,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .tick { width: 18px; height: 18px; margin: 0; accent-color: var(--fg); cursor: pointer; flex: none; vertical-align: middle; }
 table.data .check-cell { width: 1%; padding-right: 0; }
 table.data td.row-actions { width: 1%; text-align: right; white-space: nowrap; padding-top: 7px; padding-bottom: 7px; }
+.row-buttons { display: inline-flex; gap: 8px; align-items: center; }
 .bulk-bar {
   display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between;
   background: var(--gold-soft); border-radius: 14px; padding: 10px 12px 10px 16px;
@@ -294,7 +295,7 @@ ol.events p { font-size: 0.9rem; overflow-wrap: anywhere; }
 .recent li:first-child { border-top: 0; }
 
 /* Create dialogs: a button first, then a small card asking for the name */
-dialog.sheet { border: 0; padding: 0; background: transparent; width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: visible; color: inherit; }
+dialog.sheet { border: 0; padding: 0; background: transparent; width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: visible; color: inherit; text-align: left; white-space: normal; }
 dialog.sheet::backdrop { background: rgba(20, 26, 94, 0.36); }
 dialog.sheet[open] { animation: sheet-in 0.16s ease-out; }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

@@ -12,7 +12,7 @@ export const BRAND = {
   /** The app's own name, in titles and emails. */
   appName: "Eduvia Marketing",
   /** The last line under every email. */
-  footerLine: "Eduvia by Alif",
+  footerLine: "Eduvia",
   bg: "#F5F7FC",
   paper: "#FFFFFF",
   paper2: "#EDF1FA",

@@ -7,6 +7,7 @@ import { formatKL } from "@/lib/tz";
 import { getGoogleConnectionStatus, googlePickerApiKey, googleProjectNumber } from "@/lib/google/oauth";
 import { refreshStalePages } from "@/lib/forms/page-read";
 import { Builder } from "./builder";
+import { DuplicateAutomationButton } from "@/components/duplicate-buttons";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -64,7 +65,10 @@ export default async function AutomationPage({
         <p className="label">
           <Link href="/automations" style={{ textDecoration: "none" }}>Automations</Link> / {automation.status}
         </p>
-        <h1>{automation.name}</h1>
+        <div className="spread">
+          <h1>{automation.name}</h1>
+          <DuplicateAutomationButton automation={{ id: automation.id, name: automation.name }} />
+        </div>
       </div>
 
       <nav className="tabs" aria-label="Automation sections">

@@ -4,6 +4,7 @@ import { formatKL } from "@/lib/tz";
 import { deleteFormsAction, setFormsStatusAction } from "@/lib/actions/forms";
 import { BulkSelection, RowCheck, SelectAll } from "@/components/bulk-selection";
 import { ConfirmButton } from "@/components/confirm-button";
+import { DuplicateFormButton } from "@/components/duplicate-buttons";
 import { NewFormButton } from "./new-form-button";
 
 export const metadata = { title: "Forms" };
@@ -12,7 +13,7 @@ export default async function FormsPage() {
   const forms = await db.form.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      _count: { select: { submissions: true } },
+      _count: { select: { submissions: true, triggers: true } },
       submissions: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } },
     },
   });
@@ -84,11 +85,14 @@ export default async function FormsPage() {
                     <td className="mono">{form._count.submissions}</td>
                     <td className="muted">{form.submissions[0] ? formatKL(form.submissions[0].createdAt) : "—"}</td>
                     <td className="row-actions">
+                      <div className="row-buttons">
+                      <DuplicateFormButton form={form} automationCount={form._count.triggers} />
                       <ConfirmButton
                         action={deleteFormsAction.bind(null, [form.id])}
                         label="Delete"
                         confirm={`Delete “${form.name}” and its ${form._count.submissions} submission${form._count.submissions === 1 ? "" : "s"}? This can't be undone.`}
                       />
+                      </div>
                     </td>
                   </tr>
                 ))}

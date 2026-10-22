@@ -37,11 +37,10 @@ hPanel → the Node.js app → **Environment variables**. Hostinger replaces the
 | `APP_URL` | `https://marketing.eduvia.my` |
 | `CRON_SECRET` | another long random string |
 | `TZ` | `Asia/Kuala_Lumpur` |
-| `EMAIL_PROVIDER` | `hostinger_api` |
-| `HOSTINGER_MAIL_TOKEN` | step 4 |
-| `HOSTINGER_MAILBOX_ID` | step 4 |
-| `EMAIL_FROM` | the sending mailbox, e.g. `hello@eduvia.my` |
-| `EMAIL_FROM_NAME` | the sender name people see, e.g. `Eduvia` |
+| `EMAIL_PROVIDER` | `gmail` |
+| `EMAIL_FROM` | `eduvia.alif@gmail.com` |
+| `EMAIL_FROM_NAME` | `Eduvia` (the sender name people see) |
+| `EMAIL_API_KEY` | the Google App Password from step 4 |
 | `GOOGLE_CLIENT_ID` | step 6 |
 | `GOOGLE_CLIENT_SECRET` | step 6 |
 | `GOOGLE_PICKER_API_KEY` | step 6 |
@@ -50,16 +49,20 @@ A changed variable only takes effect after a **new build**: push a commit or pre
 
 After the first deploy, open the app's **Runtime logs**. You should see `[migrate] applied …`, `created admin …` and `created the Eduvia enquiry form`, and no errors. One "Server is not running" line during a restart is harmless.
 
-## 4. Email (Hostinger Business Email)
+## 4. Email (from eduvia.alif@gmail.com)
 
-1. Create the sending mailbox if it doesn't exist: hPanel → **Emails** → eduvia.my → **Create email account** (e.g. `hello@eduvia.my`).
-2. Create a **Mail API token scoped to only that mailbox** and note the **mailbox ID**. The easiest way is to ask Claude with the **Hostinger connector** attached: "Create a Mail API token for hello@eduvia.my only and tell me its mailbox ID". You never need the mailbox password for this.
-3. Put them in `HOSTINGER_MAIL_TOKEN` and `HOSTINGER_MAILBOX_ID`, then rebuild.
-4. Check: Account page says "Emails go out through your Hostinger mailbox". In any automation, open an **Email them** step and press **Send me a test**.
+The app sends through Gmail with an **App Password**, a separate 16-character password only for this app. Your real Gmail password is never used.
 
-The Mail API has no Reply-To, so the "new submission" alert has a **Reply** button that opens an email to the person instead.
+1. Sign in to <https://myaccount.google.com> as `eduvia.alif@gmail.com`.
+2. **Security** → turn on **2-Step Verification** (App Passwords only exist once it's on).
+3. Open <https://myaccount.google.com/apppasswords>, name it `Eduvia Marketing`, press **Create**. Copy the 16 letters (spaces don't matter).
+4. In hPanel's environment variables (all of them, step 3): `EMAIL_PROVIDER=gmail`, `EMAIL_FROM=eduvia.alif@gmail.com`, `EMAIL_FROM_NAME=Eduvia`, `EMAIL_API_KEY=<the 16 letters>`. Rebuild.
+5. Check: the Account page says "Emails go out through gmail as eduvia.alif@gmail.com". In any automation, open an **Email them** step and press **Send me a test**.
 
-Fallback if you can't get a token: `EMAIL_PROVIDER=hostinger`, `EMAIL_FROM=hello@eduvia.my`, `EMAIL_API_KEY=<mailbox password>` (SMTP).
+Good to know:
+- Replies to the "new submission" alert go straight to the person who filled in the form (and the email has a **Reply** button too).
+- A personal Gmail account can send about **500 emails a day**. Plenty for enquiries; not for mass mail-outs.
+- If **Send me a test** fails with a timeout or "connection refused", the Hostinger server isn't allowed to reach Gmail's mail server. Then send from a mailbox on eduvia.my instead: create one in hPanel → **Emails**, and use `EMAIL_PROVIDER=hostinger`, `EMAIL_FROM=<that mailbox>`, `EMAIL_API_KEY=<its password>`.
 
 ## 5. Cron job (for Wait steps)
 
@@ -124,5 +127,5 @@ The form only accepts submissions from `eduvia.my` (and its subdomains). Change 
 
 - Sign in at https://marketing.eduvia.my as `eduvia.alif@gmail.com`.
 - Submit the form on eduvia.my: it shows under **Submissions**, you get the alert email, and an active automation shows a run under **Runs**.
-- **Send me a test** arrives from your sender name and mailbox, in the Eduvia look.
+- **Send me a test** arrives from Eduvia <eduvia.alif@gmail.com>, in the Eduvia look.
 - A Google Sheets step adds a row.

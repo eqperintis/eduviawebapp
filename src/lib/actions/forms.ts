@@ -8,6 +8,7 @@ import { newPublicId } from "@/lib/migrate";
 import { isEmail } from "@/lib/forms/fields";
 import { httpUrl, pageUrlFromReferrer, parseDomainList } from "@/lib/forms/origin";
 import { readFormPage } from "@/lib/forms/page-read";
+import { copyAutomation } from "@/lib/automations/duplicate";
 import type { FormState } from "@/lib/actions/auth";
 
 function text(formData: FormData, key: string): string {
@@ -24,6 +25,51 @@ export async function createFormAction(_prev: FormState, formData: FormData): Pr
     data: { name, publicId: newPublicId(), notifyEmails: user.email },
   });
   redirect(`/forms/${form.id}?tab=integration`);
+}
+
+/**
+ * Copies a form's settings and learned fields under a new endpoint.
+ * Submissions stay with the original. With "withAutomations" ticked, every
+ * automation the form starts is copied too, started by the new form only,
+ * as drafts.
+ */
+export async function duplicateFormAction(formId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
+  const name = text(formData, "name");
+  if (!name) return { error: "Give the copy a name." };
+  if (name.length > 120) return { error: "Keep the name under 120 characters." };
+  const source = await db.form.findUnique({ where: { id: formId }, include: { triggers: { select: { automationId: true } } } });
+  if (!source) return { error: "That form no longer exists." };
+  const withAutomations = formData.get("withAutomations") === "on";
+
+  const copy = await db.$transaction(async (tx) => {
+    const form = await tx.form.create({
+      data: {
+        name,
+        publicId: newPublicId(),
+        status: source.status,
+        notifyEnabled: source.notifyEnabled,
+        notifyEmails: source.notifyEmails,
+        allowedDomains: source.allowedDomains,
+        redirectUrl: source.redirectUrl,
+        successTitle: source.successTitle,
+        successMessage: source.successMessage,
+        fields: source.fields,
+        // The copy usually goes on another page: learned again from where its submissions come from.
+      },
+    });
+    if (withAutomations) {
+      const automations = await tx.automation.findMany({
+        where: { id: { in: source.triggers.map((trigger) => trigger.automationId) } },
+        orderBy: { createdAt: "asc" },
+      });
+      for (const automation of automations) await copyAutomation(tx, automation.id, `${automation.name} (${name})`, [form.id]);
+    }
+    return form;
+  });
+  revalidatePath("/forms");
+  if (withAutomations) revalidatePath("/automations");
+  redirect(`/forms/${copy.id}?tab=integration`);
 }
 
 export async function updateFormSettingsAction(formId: string, _prev: FormState, formData: FormData): Promise<FormState> {

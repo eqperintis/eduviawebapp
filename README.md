@@ -30,6 +30,7 @@ Or post JSON/FormData with `fetch()` and `Accept: application/json` to get `{ "o
 - **Only accept submissions from:** lock a form to your domains (subdomains included).
 - **After submitting:** an automation's Redirect wins, then `_next`, then the form's redirect link, then the hosted thank-you page.
 - Rate limited per visitor (15 per 10 minutes per form).
+- **Duplicate** (in the list or at the top of a form) copies a form's settings and learned fields under a new endpoint, and can copy the automations it starts for the new form, as drafts.
 
 ## Automations
 
@@ -45,7 +46,7 @@ A flow starts when one or more chosen forms are submitted. Steps:
 | Google Sheets | Adds the submission as a row in a sheet picked from Google Drive. |
 | Webhook | POSTs the submission as JSON to another app, e.g. Zapier or Make. |
 
-Text can use `{{name}}`, `{{email}}`, `{{form_name}}`, `{{submitted_at}}`, `{{answers}}` and `{{<field name>}}`. Each automation's **Runs** tab shows what happened to every person, step by step.
+Text can use `{{name}}`, `{{email}}`, `{{form_name}}`, `{{submitted_at}}`, `{{answers}}` and `{{<field name>}}`. Each automation's **Runs** tab shows what happened to every person, step by step. **Duplicate** copies the whole flow, started by the same forms, as a draft.
 
 ## Brand
 
