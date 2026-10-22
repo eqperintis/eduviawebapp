@@ -133,8 +133,8 @@ async function seed(tx: Tx): Promise<void> {
         publicId: "eduvia-enquiry",
         allowedDomains: "eduvia.my",
         notifyEmails: process.env.ADMIN_EMAIL ?? "",
-        successTitle: "Application received.",
-        successMessage: "I'll read it and reply on WhatsApp.",
+        successTitle: "Thank you, we've got it.",
+        successMessage: "We'll read your enquiry and get back to you soon.",
       },
     });
     console.log("[migrate] created the Eduvia enquiry form");

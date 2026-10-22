@@ -6,7 +6,7 @@ import { labelFromKey, type FieldDef, type FieldKind } from "@/lib/forms/fields"
  * dropdown, radio group, checkbox group and pick-list, with all of its
  * options in page order. Submissions only ever show the answers people
  * picked; the page shows the ones they could pick, so a condition can offer
- * "Above RM300K" before anyone has chosen it. Pure (no fetching) so it can
+ * "Pre-university" before anyone has chosen it. Pure (no fetching) so it can
  * be tested.
  */
 

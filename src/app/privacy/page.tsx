@@ -16,7 +16,7 @@ export default function PrivacyPage() {
           <img src={LOGO.web} alt={BRAND.name} width={156} height={40} />
         </a>
         <article className="card stack legal">
-          <p className="label">Privacy policy · Updated 7 October 2026</p>
+          <p className="label">Privacy policy · Updated 22 October 2026</p>
           <h1>How Eduvia handles your information</h1>
           <p>
             This covers the forms on eduvia.my and marketing.eduvia.my, the tool Eduvia uses to receive and follow
@@ -25,14 +25,14 @@ export default function PrivacyPage() {
 
           <h2>What we collect</h2>
           <p>
-            Only what you type into an Eduvia form, for example your name, email, phone number and details about your
-            business, plus the page you sent it from and the time.
+            Only what you type into an Eduvia form, for example your name, email, phone number and details about the
+            student and what they&apos;d like to learn, plus the page you sent it from and the time.
           </p>
 
           <h2>How we use it</h2>
           <p>
             To reply to you, to send the follow-up emails you&apos;d expect after filling in the form, and to keep a record
-            of applications. We don&apos;t sell your information or share it with advertisers. Every follow-up email has
+            of enquiries. We don&apos;t sell your information or share it with advertisers. Every follow-up email has
             an unsubscribe link.
           </p>
 
@@ -49,8 +49,9 @@ export default function PrivacyPage() {
             (the <code>drive.file</code> scope), never the rest of the Drive, plus the account&apos;s email address to show
             which account is connected. That access is used only to write those rows. It isn&apos;t used for advertising,
             isn&apos;t shared with anyone else, and isn&apos;t used to train AI models. Eduvia&apos;s use of information
-            received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use
-            requirements. The connection can be removed at any time from the Account page or from your Google Account
+            received from Google APIs adheres to the{" "}
+            <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>,
+            including the Limited Use requirements. The connection can be removed at any time from the Account page or from your Google Account
             settings.
           </p>
 

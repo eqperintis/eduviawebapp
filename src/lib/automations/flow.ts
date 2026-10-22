@@ -72,7 +72,7 @@ function joinWithOr(values: string[]): string {
   return `${values.slice(0, -1).join(", ")} or ${values[values.length - 1]}`;
 }
 
-/** "If Monthly revenue is RM30K-RM100K", written the way the owner would say it. */
+/** "If Student's level is Upper secondary", written the way the owner would say it. */
 export function describeCondition(node: StoredNode, trigger: TriggerDefinition): string {
   if (!node.conditionField || !node.conditionOperator) return "Not set up yet";
   const field = fieldOrTyped(trigger, node.conditionField);

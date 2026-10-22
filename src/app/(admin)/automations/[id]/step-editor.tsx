@@ -436,7 +436,7 @@ function SheetFields({
                     <input
                       aria-label={`Text for ${column.header || "this column"}`}
                       value={column.value.trim() === "" ? "" : column.value}
-                      placeholder="e.g. Website, or {{revenue}} RM"
+                      placeholder="e.g. Website, or {{level}}"
                       onChange={(event) => setColumn(index, { value: event.target.value || " " })}
                       className="column-custom"
                     />
@@ -529,7 +529,7 @@ function ConditionFields({
           <input
             aria-label="Field name"
             value={field}
-            placeholder="The input's name, e.g. revenue"
+            placeholder="The input's name, e.g. level"
             onChange={(event) => onField(event.target.value, true)}
             className="mono"
           />
@@ -575,7 +575,7 @@ function Operands({
         <input
           id="c-val"
           value={operands.join(", ")}
-          placeholder="RM100K-RM300K, Above RM300K"
+          placeholder="Upper secondary, Pre-university"
           onChange={(event) => onOperands(event.target.value.split(",").map((value) => value.trim()))}
         />
         <span className="hint">Separate values with commas.</span>
