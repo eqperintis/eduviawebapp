@@ -1,31 +1,50 @@
 /**
- * UTM tags: the labels on a link that say where a visitor came from
- * (eduvia.my/enquire?utm_source=facebook&utm_campaign=holiday_camp). The
- * site's /utm.js copies them into hidden form fields, so they arrive like any
- * other answer and are learned as fields: they show on submissions, in the
- * CSV, in conditions, in Sheets columns and as {{utm_source}}. Free of
- * server imports so the builder UI can use the labels too.
+ * Where a visitor came from. Two kinds of fields, both added to the form by
+ * the site's /utm.js and saved like any other answer, so they show on
+ * submissions, in the CSV, in conditions, in Sheets columns and as
+ * {{utm_source}} / {{came_from}}:
+ *
+ * - UTM tags: labels the owner puts on the links they share
+ *   (eduvia.my/enquire?utm_source=facebook&utm_campaign=holiday_camp).
+ *   The tracking-link maker on the Integration tab writes them.
+ * - came_from: worked out by the script with nothing to set up, from the
+ *   site the visitor clicked through from ("Google search", "Instagram",
+ *   "Direct"...).
+ *
+ * Free of server imports so the builder UI can use it too.
  */
 
 export const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+export type UtmKey = (typeof UTM_KEYS)[number];
 
-export const UTM_LABELS: Record<(typeof UTM_KEYS)[number], string> = {
+/** The field /utm.js fills in by itself. */
+export const CAME_FROM_KEY = "came_from";
+
+const TRACKING_KEYS: readonly string[] = [CAME_FROM_KEY, ...UTM_KEYS];
+
+const TRACKING_LABELS: Record<string, string> = {
+  came_from: "Came from (website)",
   utm_source: "UTM source (e.g. facebook)",
   utm_medium: "UTM medium (e.g. paid)",
   utm_campaign: "UTM campaign",
-  utm_content: "UTM content (which ad or link)",
+  utm_content: "UTM content (which ad or post)",
   utm_term: "UTM term (search keyword)",
 };
 
-/** Where conditions list the UTM fields. */
-export const UTM_FIELD_GROUP = "Where they came from (UTM)";
+/** Where conditions list these fields. */
+export const TRACKING_FIELD_GROUP = "Where they came from";
 
-export function isUtmKey(key: string): key is (typeof UTM_KEYS)[number] {
-  return (UTM_KEYS as readonly string[]).includes(key);
+/** UTM tags and came_from: filled in by the script, not typed by the person. */
+export function isTrackingKey(key: string): boolean {
+  return TRACKING_KEYS.includes(key);
+}
+
+export function trackingLabel(key: string): string | null {
+  return TRACKING_LABELS[key] ?? null;
 }
 
 /** The UTM tags in a page address, e.g. the Referer of a submission. Empty for junk. */
-export function utmFromUrl(url: string | null | undefined): Partial<Record<(typeof UTM_KEYS)[number], string>> {
+export function utmFromUrl(url: string | null | undefined): Partial<Record<UtmKey, string>> {
   if (!url) return {};
   let params: URLSearchParams;
   try {
@@ -33,7 +52,7 @@ export function utmFromUrl(url: string | null | undefined): Partial<Record<(type
   } catch {
     return {};
   }
-  const found: Partial<Record<(typeof UTM_KEYS)[number], string>> = {};
+  const found: Partial<Record<UtmKey, string>> = {};
   for (const key of UTM_KEYS) {
     const value = params.get(key)?.trim();
     if (value) found[key] = value.slice(0, 200);
@@ -51,4 +70,61 @@ export function withUtmFromReferrer(data: Record<string, unknown>, referrer: str
   const fromPage = utmFromUrl(referrer);
   const missing = Object.entries(fromPage).filter(([key]) => !(key in data) || data[key] === "");
   return missing.length ? { ...data, ...Object.fromEntries(missing) } : data;
+}
+
+/** Where a tracking link will be posted, and what kind of traffic that is when it isn't a paid ad. */
+export const LINK_SOURCES = [
+  { value: "facebook", label: "Facebook", medium: "social" },
+  { value: "instagram", label: "Instagram", medium: "social" },
+  { value: "tiktok", label: "TikTok", medium: "social" },
+  { value: "youtube", label: "YouTube", medium: "social" },
+  { value: "whatsapp", label: "WhatsApp", medium: "messaging" },
+  { value: "telegram", label: "Telegram", medium: "messaging" },
+  { value: "google", label: "Google", medium: "search" },
+  { value: "email", label: "Email or newsletter", medium: "email" },
+  { value: "flyer", label: "Flyer, poster or QR code", medium: "print" },
+] as const;
+
+/** "Holiday Camp 2026!" → "holiday_camp_2026": the same campaign always reads the same in reports. */
+export function tagValue(text: string): string {
+  return text
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 80);
+}
+
+/**
+ * A link to the site with UTM tags on it, for the tracking-link maker.
+ * Keeps whatever the page link already has (other parameters, #anchor).
+ * Null when the page link isn't a full web address.
+ */
+export function buildTrackingLink(args: {
+  page: string;
+  source: string;
+  paid: boolean;
+  campaign: string;
+  content?: string;
+}): string | null {
+  let url: URL;
+  try {
+    url = new URL(args.page.trim());
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  const source = tagValue(args.source);
+  if (!source) return null;
+  const known = LINK_SOURCES.find((entry) => entry.value === source);
+  url.searchParams.set("utm_source", source);
+  url.searchParams.set("utm_medium", args.paid ? "paid" : known?.medium ?? "referral");
+  const campaign = tagValue(args.campaign);
+  if (campaign) url.searchParams.set("utm_campaign", campaign);
+  else url.searchParams.delete("utm_campaign");
+  const content = tagValue(args.content ?? "");
+  if (content) url.searchParams.set("utm_content", content);
+  else url.searchParams.delete("utm_content");
+  return url.toString();
 }

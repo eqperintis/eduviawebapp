@@ -1,5 +1,5 @@
 import type { FieldDef } from "@/lib/forms/fields";
-import { isUtmKey } from "@/lib/forms/utm";
+import { isTrackingKey } from "@/lib/forms/utm";
 
 /**
  * A prompt the owner pastes into an AI assistant (Claude, ChatGPT, Cursor…)
@@ -19,8 +19,8 @@ function fieldLine(field: FieldDef): string {
 export function buildAiPrompt(args: { endpoint: string; formName: string; fields: FieldDef[]; allowedDomains: string[] }): string {
   const { endpoint } = args;
   const utmScript = `${new URL(endpoint).origin}/utm.js`;
-  // UTM tags come from the script below, not from inputs on the form.
-  const formFields = args.fields.filter((field) => !isUtmKey(field.key));
+  // UTM tags and came_from come from the script below, not from inputs on the form.
+  const formFields = args.fields.filter((field) => !isTrackingKey(field.key));
   const fieldsSection = formFields.length
     ? `The form already sends these fields. Use the same \`name\` attributes so the answers keep lining up with my automations:\n\n${formFields.map(fieldLine).join("\n")}\n\nYou can add fields; new names are picked up automatically.`
     : "The form doesn't have any fields yet. Choose sensible `name` attributes (e.g. `name`, `email`, `message`); they're picked up automatically on the first submission.";
@@ -67,7 +67,7 @@ It goes on eduvia.my, so it must look like the rest of that site. If the page al
 
 ---
 
-# Where people came from (UTM tags)
+# Where people came from
 
 Add this once to every page that has the form (in the \`<head>\`, or anywhere before \`</body>\`):
 
@@ -75,11 +75,11 @@ Add this once to every page that has the form (in the \`<head>\`, or anywhere be
 <script src="${utmScript}" defer></script>
 \`\`\`
 
-When someone arrives on a link with UTM tags (e.g. \`?utm_source=facebook&utm_campaign=holiday_camp\`), it keeps them for 30 days and adds them as hidden fields (\`utm_source\`, \`utm_medium\`, \`utm_campaign\`, \`utm_content\`, \`utm_term\`) to every form whose \`action\` is this endpoint, or that has a \`data-utm\` attribute. So:
+It works out where the visitor came from (\`came_from\`, e.g. "Google search", "Instagram", "Direct") and reads any UTM tags on the link they arrived on (\`utm_source\`, \`utm_medium\`, \`utm_campaign\`, \`utm_content\`, \`utm_term\`), keeps them for 30 days, and adds them as hidden fields to every form whose \`action\` is this endpoint, or that has a \`data-utm\` attribute. So:
 - A form with \`action="${endpoint}"\` needs nothing else.
 - A form submitted with fetch() and \`new FormData(form)\` and no \`action\`: give the \`<form>\` a \`data-utm\` attribute.
 - If you send JSON instead of FormData, merge \`window.eduviaUtm?.()\` into the object you send.
-Don't add your own \`utm_*\` inputs.
+Don't add your own \`came_from\` or \`utm_*\` inputs.
 
 ---
 

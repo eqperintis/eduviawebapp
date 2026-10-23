@@ -122,13 +122,13 @@ On the page with the enquiry form, set:
 </form>
 ```
 
-To see where each enquiry came from (Facebook ad, Google, WhatsApp link…), also add this once to that page:
+To see where each enquiry came from, also add this once to that page:
 
 ```html
 <script src="https://marketing.eduvia.my/utm.js" defer></script>
 ```
 
-Then use links with UTM tags in your ads, e.g. `https://eduvia.my/enquire?utm_source=facebook&utm_medium=paid&utm_campaign=holiday_camp`.
+Every enquiry then says where the person came from ("Google search", "Instagram", "Direct"…) with nothing else to do. For more detail (which campaign, which ad), make links with **Make a tracking link** on the form's Integration tab and share those instead of your plain page address.
 
 Or open the form's **Integration** tab, press **Copy prompt** and give it to an AI assistant along with the page's code.
 

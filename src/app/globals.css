@@ -200,6 +200,9 @@ table.data a:hover { text-decoration: underline; text-decoration-color: var(--go
 .code.prompt .show-more:hover { color: #FFFFFF; }
 .endpoint { display: flex; gap: 10px; align-items: center; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px; padding: 8px 10px 8px 14px; min-width: 0; }
 .endpoint code { flex: 1; overflow-x: auto; white-space: nowrap; font-size: 0.9rem; }
+/* A long link people should be able to read whole before copying. */
+.endpoint.wraps { align-items: flex-start; }
+.endpoint.wraps code { white-space: normal; overflow-wrap: anywhere; line-height: 1.5; padding-top: 4px; }
 
 /* Key/value list */
 dl.kv { display: grid; grid-template-columns: minmax(120px, 34%) 1fr; margin: 0; }

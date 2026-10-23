@@ -16,6 +16,7 @@ import { NewAutomationButton } from "../../automations/new-automation-button";
 import { SettingsForm } from "./settings-form";
 import { DuplicateFormButton } from "@/components/duplicate-buttons";
 import { RenameFormButton } from "@/components/rename-buttons";
+import { TrackingLinkMaker } from "@/components/tracking-link-maker";
 
 // Formspree's layout: a form is just an endpoint, with nothing to set up.
 const TABS = [
@@ -105,12 +106,10 @@ export default async function FormPage({
           </div>
           <div className="card stack">
             <div className="stack-sm">
-              <p className="label">Where people came from (UTM)</p>
+              <p className="label">Where people came from</p>
               <p className="muted">
-                Add this once to the page with your form. When someone arrives on a link with UTM tags, like{" "}
-                <code>{SITE_URL}/?utm_source=facebook&amp;utm_campaign=holiday_camp</code>, the tags are sent with their
-                answers. They show on each submission and in the CSV, and you can use them in conditions, Google Sheets
-                and emails, e.g. <code>{"{{utm_source}}"}</code>.
+                Add this once to the page with your form. Every enquiry then shows where the person came from, like
+                Google search, Instagram or Direct, with nothing else to set up.
               </p>
             </div>
             <div className="endpoint">
@@ -118,9 +117,21 @@ export default async function FormPage({
               <CopyButton text={utmTag} label="Copy" />
             </div>
             <p className="muted">
-              Tags are kept for 30 days, so they still count if the person looks around the site first. Forms sent with
-              JavaScript and no <code>action</code> need a <code>data-utm</code> attribute on the <code>&lt;form&gt;</code>.
+              It shows on each submission and in the CSV as &ldquo;Came from&rdquo;, and you can use it in conditions,
+              Google Sheets and emails as <code>{"{{came_from}}"}</code>. Forms sent with JavaScript and no{" "}
+              <code>action</code> need a <code>data-utm</code> attribute on the <code>&lt;form&gt;</code>.
             </p>
+          </div>
+          <div className="card stack">
+            <div className="stack-sm">
+              <p className="label">Make a tracking link</p>
+              <p className="muted">
+                For more detail, like which campaign or which ad, share a link made here instead of your plain page
+                address. The labels on it (UTM tags) arrive with the enquiry, kept for 30 days if the person looks
+                around first.
+              </p>
+            </div>
+            <TrackingLinkMaker page={form.pageUrl || `${SITE_URL}/`} />
           </div>
           <AiPromptCard
             prompt={buildAiPrompt({ endpoint, formName: form.name, fields, allowedDomains: parseDomainList(form.allowedDomains) })}
