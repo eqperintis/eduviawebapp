@@ -241,4 +241,34 @@ ALTER TABLE \`Form\` ADD COLUMN \`pageUrl\` VARCHAR(500) NULL,
     ADD COLUMN \`pageScannedAt\` DATETIME(3) NULL;
 `,
   },
+  {
+    // The Links page: saved tracking links, and each submission's tags in
+    // their own columns so sign-ups can be counted per link.
+    id: "0008_tracking_links",
+    sql: `
+ALTER TABLE \`FormSubmission\` ADD COLUMN \`cameFrom\` VARCHAR(191) NOT NULL DEFAULT '',
+    ADD COLUMN \`utmCampaign\` VARCHAR(191) NOT NULL DEFAULT '',
+    ADD COLUMN \`utmContent\` VARCHAR(191) NOT NULL DEFAULT '',
+    ADD COLUMN \`utmMedium\` VARCHAR(191) NOT NULL DEFAULT '',
+    ADD COLUMN \`utmSource\` VARCHAR(191) NOT NULL DEFAULT '';
+
+CREATE TABLE \`TrackingLink\` (
+    \`id\` VARCHAR(191) NOT NULL,
+    \`name\` VARCHAR(191) NOT NULL,
+    \`pageUrl\` VARCHAR(500) NOT NULL,
+    \`source\` VARCHAR(191) NOT NULL,
+    \`medium\` VARCHAR(191) NOT NULL,
+    \`campaign\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`content\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    \`updatedAt\` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (\`id\`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE INDEX \`FormSubmission_utmSource_utmMedium_utmCampaign_utmContent_idx\` ON \`FormSubmission\`(\`utmSource\`, \`utmMedium\`, \`utmCampaign\`, \`utmContent\`);
+
+CREATE INDEX \`FormSubmission_cameFrom_createdAt_idx\` ON \`FormSubmission\`(\`cameFrom\`, \`createdAt\`);
+`,
+  },
 ];

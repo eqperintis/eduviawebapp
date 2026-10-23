@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildTrackingLink, tagValue, utmFromUrl, withUtmFromReferrer } from "./utm";
+import { buildTrackingLink, linkTags, sourceLabel, tagValue, trackingColumns, utmFromUrl, withUtmFromReferrer } from "./utm";
 import { labelFromKey, learnFields } from "./fields";
 import { buildTrigger } from "@/lib/automations/triggers";
 import { fillText, answerRows } from "@/lib/email/render";
@@ -77,5 +77,40 @@ describe("tracking links", () => {
     expect(buildTrackingLink({ page: "eduvia.my", source: "facebook", paid: false, campaign: "x" })).toBeNull();
     expect(buildTrackingLink({ page: "javascript:alert(1)", source: "facebook", paid: false, campaign: "x" })).toBeNull();
     expect(buildTrackingLink({ page: "https://eduvia.my/", source: "  ", paid: false, campaign: "x" })).toBeNull();
+  });
+});
+
+describe("saved links", () => {
+  it("works out the four tags a link carries", () => {
+    expect(linkTags({ source: "flyer", paid: false, campaign: "School fair Oct 2026" })).toEqual({
+      source: "flyer",
+      medium: "print",
+      campaign: "school_fair_oct_2026",
+      content: "",
+    });
+    expect(linkTags({ source: "Facebook", paid: true, campaign: "", content: "Video 1" })).toEqual({
+      source: "facebook",
+      medium: "paid",
+      campaign: "",
+      content: "video_1",
+    });
+    expect(linkTags({ source: " ", paid: false, campaign: "x" })).toBeNull();
+  });
+
+  it("copies a submission's tags into its own columns", () => {
+    expect(trackingColumns({ utm_source: "flyer", utm_medium: "print", utm_campaign: ["school_fair"], came_from: "Direct (typed, bookmark or app)", name: "A" })).toEqual({
+      utmSource: "flyer",
+      utmMedium: "print",
+      utmCampaign: "school_fair",
+      utmContent: "",
+      cameFrom: "Direct (typed, bookmark or app)",
+    });
+    expect(trackingColumns({ name: "A" })).toEqual({ utmSource: "", utmMedium: "", utmCampaign: "", utmContent: "", cameFrom: "" });
+    expect(trackingColumns({ utm_source: "x".repeat(300) }).utmSource).toHaveLength(191);
+  });
+
+  it("names the places people post", () => {
+    expect(sourceLabel("flyer")).toBe("Flyer, poster or QR code");
+    expect(sourceLabel("partner_school")).toBe("partner_school");
   });
 });

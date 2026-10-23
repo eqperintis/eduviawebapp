@@ -129,7 +129,7 @@ main.page { padding-block: 40px 96px; }
 .small-link { font-size: 0.8rem; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
 .small-link:hover { color: var(--fg); }
 .center-text { text-align: center; }
-.field .hint { font-size: 0.8rem; color: var(--muted); }
+.field .hint, .hint { font-size: 0.8rem; color: var(--muted); }
 input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], input[type="date"], input[type="time"], input:not([type]), select, textarea {
   font: 400 0.95rem/1.4 var(--sans); color: var(--fg);
   background: var(--paper); border: 1.5px solid var(--line-soft); border-radius: 12px; padding: 11px 13px; width: 100%; min-width: 0;
@@ -298,11 +298,22 @@ ol.events p { font-size: 0.9rem; overflow-wrap: anywhere; }
 .recent li:first-child { border-top: 0; }
 
 /* Create dialogs: a button first, then a small card asking for the name */
-dialog.sheet { border: 0; padding: 0; background: transparent; width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: visible; color: inherit; text-align: left; white-space: normal; }
+dialog.sheet { border: 0; padding: 0; background: transparent; width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; color: inherit; text-align: left; white-space: normal; }
 dialog.sheet::backdrop { background: rgba(20, 26, 94, 0.36); }
 dialog.sheet[open] { animation: sheet-in 0.16s ease-out; }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
+
+/* Links page: one card per saved link, and the "how people found you" bars */
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 20px; align-items: start; }
+.link-card h3 { overflow-wrap: anywhere; }
+.link-card details summary, .card details summary { cursor: pointer; }
+details.card > summary.spread { list-style: none; }
+ul.shares { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+ul.shares li { display: grid; grid-template-columns: minmax(0, 11rem) 1fr auto; gap: 12px; align-items: center; font-size: 0.92rem; }
+ul.shares li > span:first-child { overflow-wrap: anywhere; }
+.share-bar { height: 10px; border-radius: 999px; background: var(--paper-2); overflow: hidden; }
+.share-bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
 
 /* Long-form text, e.g. the privacy policy */
 .legal h2 { margin-top: 8px; }

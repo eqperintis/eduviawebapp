@@ -96,11 +96,44 @@ export function tagValue(text: string): string {
     .slice(0, 80);
 }
 
+export type LinkTags = { source: string; medium: string; campaign: string; content: string };
+
+/** The four tags a tracking link carries, from the Links page's plain choices. Null without a source. */
+export function linkTags(args: { source: string; paid: boolean; campaign: string; content?: string }): LinkTags | null {
+  const source = tagValue(args.source);
+  if (!source) return null;
+  const known = LINK_SOURCES.find((entry) => entry.value === source);
+  return {
+    source,
+    medium: args.paid ? "paid" : known?.medium ?? "referral",
+    campaign: tagValue(args.campaign),
+    content: tagValue(args.content ?? ""),
+  };
+}
+
 /**
- * A link to the site with UTM tags on it, for the tracking-link maker.
- * Keeps whatever the page link already has (other parameters, #anchor).
- * Null when the page link isn't a full web address.
+ * The page link with the tags on it. Keeps whatever the page link already
+ * has (other parameters, #anchor). Null when the page link isn't a full web
+ * address.
  */
+export function linkUrl(page: string, tags: LinkTags): string | null {
+  let url: URL;
+  try {
+    url = new URL(page.trim());
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  url.searchParams.set("utm_source", tags.source);
+  url.searchParams.set("utm_medium", tags.medium);
+  if (tags.campaign) url.searchParams.set("utm_campaign", tags.campaign);
+  else url.searchParams.delete("utm_campaign");
+  if (tags.content) url.searchParams.set("utm_content", tags.content);
+  else url.searchParams.delete("utm_content");
+  return url.toString();
+}
+
+/** linkTags then linkUrl, in one go. */
 export function buildTrackingLink(args: {
   page: string;
   source: string;
@@ -108,23 +141,35 @@ export function buildTrackingLink(args: {
   campaign: string;
   content?: string;
 }): string | null {
-  let url: URL;
-  try {
-    url = new URL(args.page.trim());
-  } catch {
-    return null;
-  }
-  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
-  const source = tagValue(args.source);
-  if (!source) return null;
-  const known = LINK_SOURCES.find((entry) => entry.value === source);
-  url.searchParams.set("utm_source", source);
-  url.searchParams.set("utm_medium", args.paid ? "paid" : known?.medium ?? "referral");
-  const campaign = tagValue(args.campaign);
-  if (campaign) url.searchParams.set("utm_campaign", campaign);
-  else url.searchParams.delete("utm_campaign");
-  const content = tagValue(args.content ?? "");
-  if (content) url.searchParams.set("utm_content", content);
-  else url.searchParams.delete("utm_content");
-  return url.toString();
+  const tags = linkTags(args);
+  return tags ? linkUrl(args.page, tags) : null;
+}
+
+export type TrackingColumns = {
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  utmContent: string;
+  cameFrom: string;
+};
+
+function column(value: unknown): string {
+  const first = Array.isArray(value) ? value[0] : value;
+  return typeof first === "string" || typeof first === "number" ? String(first).trim().slice(0, 191) : "";
+}
+
+/** A submission's tags, for its own columns: what the Links page counts by. */
+export function trackingColumns(data: Record<string, unknown>): TrackingColumns {
+  return {
+    utmSource: column(data.utm_source),
+    utmMedium: column(data.utm_medium),
+    utmCampaign: column(data.utm_campaign),
+    utmContent: column(data.utm_content),
+    cameFrom: column(data[CAME_FROM_KEY]),
+  };
+}
+
+/** "facebook" → "Facebook"; a place typed by hand shows as typed. */
+export function sourceLabel(source: string): string {
+  return LINK_SOURCES.find((entry) => entry.value === source)?.label ?? source;
 }

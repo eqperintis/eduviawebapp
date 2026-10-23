@@ -128,7 +128,7 @@ To see where each enquiry came from, also add this once to that page:
 <script src="https://marketing.eduvia.my/utm.js" defer></script>
 ```
 
-Every enquiry then says where the person came from ("Google search", "Instagram", "Direct"…) with nothing else to do. For more detail (which campaign, which ad), make links with **Make a tracking link** on the form's Integration tab and share those instead of your plain page address.
+Every enquiry then says where the person came from ("Google search", "Instagram", "Direct"…) with nothing else to do. For more detail (which flyer, post or ad), make a link for each place on the **Links** page and share those instead of your plain page address. The Links page counts the sign-ups each one brings.
 
 Or open the form's **Integration** tab, press **Copy prompt** and give it to an AI assistant along with the page's code.
 

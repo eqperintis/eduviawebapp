@@ -10,7 +10,7 @@ import { refreshStalePages } from "@/lib/forms/page-read";
 import { brandPage } from "@/lib/forms/pages";
 import { notifyOwner } from "@/lib/forms/notify";
 import { startAutomationRuns } from "@/lib/automations/engine";
-import { withUtmFromReferrer } from "@/lib/forms/utm";
+import { trackingColumns, withUtmFromReferrer } from "@/lib/forms/utm";
 
 /**
  * The form endpoint, Formspree-style. eduvia.my keeps its own form
@@ -129,6 +129,7 @@ export async function POST(request: Request, ctx: Ctx): Promise<Response> {
       email,
       name,
       referrer: referrer.slice(0, 500),
+      ...trackingColumns(data),
       ip: pickClientIp(request.headers),
       userAgent: (request.headers.get("user-agent") ?? "").slice(0, 500),
       createdAt: submittedAt,

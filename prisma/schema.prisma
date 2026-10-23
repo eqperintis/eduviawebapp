@@ -107,7 +107,34 @@ model FormSubmission {
 
   automationRuns AutomationRun[]
 
+  // Where they came from, copied out of `data` (see lib/forms/utm.ts) so the
+  // Links page can count sign-ups with plain equality, never LIKE.
+  utmSource   String @default("") @db.VarChar(191)
+  utmMedium   String @default("") @db.VarChar(191)
+  utmCampaign String @default("") @db.VarChar(191)
+  utmContent  String @default("") @db.VarChar(191)
+  cameFrom    String @default("") @db.VarChar(191)
+
   @@index([formId, createdAt])
+  @@index([utmSource, utmMedium, utmCampaign, utmContent])
+  @@index([cameFrom, createdAt])
+}
+
+// A link with UTM tags, saved on the Links page so it can be copied again
+// and its sign-ups counted: a submission belongs to the link whose four
+// tags it carries exactly.
+model TrackingLink {
+  id   String @id @default(cuid())
+  name String
+
+  pageUrl  String @db.VarChar(500)
+  source   String @db.VarChar(191)
+  medium   String @db.VarChar(191)
+  campaign String @default("") @db.VarChar(191)
+  content  String @default("") @db.VarChar(191)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Automation {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { appUrl, SITE_URL } from "@/lib/brand";
+import { appUrl } from "@/lib/brand";
 import { displayValue, labelFromKey, parseFields } from "@/lib/forms/fields";
 import { buildAiPrompt } from "@/lib/forms/ai-prompt";
 import { parseDomainList } from "@/lib/forms/origin";
@@ -16,7 +16,6 @@ import { NewAutomationButton } from "../../automations/new-automation-button";
 import { SettingsForm } from "./settings-form";
 import { DuplicateFormButton } from "@/components/duplicate-buttons";
 import { RenameFormButton } from "@/components/rename-buttons";
-import { TrackingLinkMaker } from "@/components/tracking-link-maker";
 
 // Formspree's layout: a form is just an endpoint, with nothing to set up.
 const TABS = [
@@ -122,16 +121,12 @@ export default async function FormPage({
               <code>action</code> need a <code>data-utm</code> attribute on the <code>&lt;form&gt;</code>.
             </p>
           </div>
-          <div className="card stack">
-            <div className="stack-sm">
-              <p className="label">Make a tracking link</p>
-              <p className="muted">
-                For more detail, like which campaign or which ad, share a link made here instead of your plain page
-                address. The labels on it (UTM tags) arrive with the enquiry, kept for 30 days if the person looks
-                around first.
-              </p>
-            </div>
-            <TrackingLinkMaker page={form.pageUrl || `${SITE_URL}/`} />
+          <div className="card stack-sm">
+            <p className="label">Tracking links</p>
+            <p className="muted">
+              To see which flyer, post or ad brought each sign-up, make a link for each place you share your website on
+              the <Link href="/links">Links</Link> page.
+            </p>
           </div>
           <AiPromptCard
             prompt={buildAiPrompt({ endpoint, formName: form.name, fields, allowedDomains: parseDomainList(form.allowedDomains) })}

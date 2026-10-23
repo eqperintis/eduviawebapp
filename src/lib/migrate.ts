@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { MIGRATIONS } from "@/lib/migrations";
 import { learnFields, type FieldDef } from "@/lib/forms/fields";
 import { pageUrlFromReferrer } from "@/lib/forms/origin";
+import { trackingColumns } from "@/lib/forms/utm";
 
 /**
  * Brings the database up to date on start-up: applies any migration not yet
@@ -96,6 +97,36 @@ const DATA_JOBS: { id: string; run: (tx: Tx) => Promise<void> }[] = [
         });
         const pageUrl = recent.map((entry) => pageUrlFromReferrer(entry.referrer)).find(Boolean) ?? null;
         if (pageUrl) await tx.form.update({ where: { id: form.id }, data: { pageUrl } });
+      }
+    },
+  },
+  {
+    // Submissions from before 0008 have their tags only inside `data`: copy
+    // them into the new columns so the Links page counts them too.
+    id: "0009_submission_tracking_columns",
+    run: async (tx) => {
+      let cursor: string | undefined;
+      for (;;) {
+        const batch = await tx.formSubmission.findMany({
+          orderBy: { id: "asc" },
+          take: 500,
+          ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+          select: { id: true, data: true },
+        });
+        if (batch.length === 0) break;
+        for (const submission of batch) {
+          let data: Record<string, unknown>;
+          try {
+            data = JSON.parse(submission.data) as Record<string, unknown>;
+          } catch {
+            continue;
+          }
+          const columns = trackingColumns(data);
+          if (Object.values(columns).some(Boolean)) {
+            await tx.formSubmission.update({ where: { id: submission.id }, data: columns });
+          }
+        }
+        cursor = batch[batch.length - 1].id;
       }
     },
   },
