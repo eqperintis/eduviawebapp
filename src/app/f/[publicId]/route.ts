@@ -10,6 +10,7 @@ import { refreshStalePages } from "@/lib/forms/page-read";
 import { brandPage } from "@/lib/forms/pages";
 import { notifyOwner } from "@/lib/forms/notify";
 import { startAutomationRuns } from "@/lib/automations/engine";
+import { withUtmFromReferrer } from "@/lib/forms/utm";
 
 /**
  * The form endpoint, Formspree-style. eduvia.my keeps its own form
@@ -96,7 +97,10 @@ export async function POST(request: Request, ctx: Ctx): Promise<Response> {
     if (error instanceof SubmissionError) return fail(error.status, error.message);
     throw error;
   }
-  const { data, meta } = parsed;
+  const { meta } = parsed;
+  // UTM tags normally arrive as hidden fields from /utm.js; when the browser
+  // sends the full page address, fill in any it missed from there.
+  const data = withUtmFromReferrer(parsed.data, referrer);
 
   // Where a plain HTML submit goes afterwards (a JSON caller decides itself).
   const nextFromForm = nextUrlAllowed(meta.next, allowed, fromHost);

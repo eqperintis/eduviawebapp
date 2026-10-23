@@ -17,6 +17,8 @@ describe("buildAiPrompt", () => {
     expect(prompt).toContain("#141A5E");
     expect(prompt).toContain("only accepts submissions sent from pages on: eduvia.my");
     expect(prompt).toContain("# React");
+    expect(prompt).toContain('<script src="https://marketing.eduvia.my/utm.js" defer></script>');
+    expect(prompt).toContain("data-utm");
   });
 
   it("says so when the form has no fields or domain lock yet", () => {

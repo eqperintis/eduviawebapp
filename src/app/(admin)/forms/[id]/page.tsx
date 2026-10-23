@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { appUrl } from "@/lib/brand";
+import { appUrl, SITE_URL } from "@/lib/brand";
 import { displayValue, labelFromKey, parseFields } from "@/lib/forms/fields";
 import { buildAiPrompt } from "@/lib/forms/ai-prompt";
 import { parseDomainList } from "@/lib/forms/origin";
@@ -15,6 +15,7 @@ import { SubmissionsChart, type DayCount } from "@/components/submissions-chart"
 import { NewAutomationButton } from "../../automations/new-automation-button";
 import { SettingsForm } from "./settings-form";
 import { DuplicateFormButton } from "@/components/duplicate-buttons";
+import { RenameFormButton } from "@/components/rename-buttons";
 
 // Formspree's layout: a form is just an endpoint, with nothing to set up.
 const TABS = [
@@ -58,6 +59,7 @@ export default async function FormPage({
 
   const tab: Tab = (TABS.find((entry) => entry.id === query.tab)?.id ?? "overview") as Tab;
   const endpoint = `${appUrl()}/f/${form.publicId}`;
+  const utmTag = `<script src="${appUrl()}/utm.js" defer></script>`;
   const fields = parseFields(form.fields);
 
   return (
@@ -72,6 +74,7 @@ export default async function FormPage({
             <span className={`pill ${form.status === "active" ? "ok" : "warn"}`}>
               {form.status === "active" ? "Taking submissions" : "Paused"}
             </span>
+            <RenameFormButton form={{ id: form.id, name: form.name }} />
             <DuplicateFormButton form={{ id: form.id, name: form.name }} automationCount={form.triggers.length} />
           </div>
         </div>
@@ -98,6 +101,25 @@ export default async function FormPage({
             <p className="muted">
               Place this URL in the form&apos;s <code>action</code> attribute, set the method to <code>POST</code>, and
               add a <code>name</code> attribute to each input.
+            </p>
+          </div>
+          <div className="card stack">
+            <div className="stack-sm">
+              <p className="label">Where people came from (UTM)</p>
+              <p className="muted">
+                Add this once to the page with your form. When someone arrives on a link with UTM tags, like{" "}
+                <code>{SITE_URL}/?utm_source=facebook&amp;utm_campaign=holiday_camp</code>, the tags are sent with their
+                answers. They show on each submission and in the CSV, and you can use them in conditions, Google Sheets
+                and emails, e.g. <code>{"{{utm_source}}"}</code>.
+              </p>
+            </div>
+            <div className="endpoint">
+              <code>{utmTag}</code>
+              <CopyButton text={utmTag} label="Copy" />
+            </div>
+            <p className="muted">
+              Tags are kept for 30 days, so they still count if the person looks around the site first. Forms sent with
+              JavaScript and no <code>action</code> need a <code>data-utm</code> attribute on the <code>&lt;form&gt;</code>.
             </p>
           </div>
           <AiPromptCard
@@ -138,6 +160,7 @@ export default async function FormPage({
 
       {tab === "settings" && (
         <SettingsForm
+          key={form.name}
           formId={form.id}
           initial={{
             name: form.name,

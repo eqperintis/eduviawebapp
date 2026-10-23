@@ -1,4 +1,5 @@
 import { parseFields, type FieldDef, type FieldKind } from "@/lib/forms/fields";
+import { isUtmKey, UTM_FIELD_GROUP } from "@/lib/forms/utm";
 
 /**
  * What starts an automation (one or more forms) and which fields its
@@ -72,9 +73,11 @@ export function buildTrigger(forms: TriggerForm[]): TriggerDefinition {
   }
 
   const several = forms.length > 1;
-  const fields: TriggerField[] = [...byKey.values()].map(({ field, forms: askedOn }) => ({
+  // The form's own questions first, then where they came from (UTM tags).
+  const entries = [...byKey.values()].sort((a, b) => Number(isUtmKey(a.field.key)) - Number(isUtmKey(b.field.key)));
+  const fields: TriggerField[] = entries.map(({ field, forms: askedOn }) => ({
     ...field,
-    group: several ? (askedOn.length > 1 ? SHARED_FIELD_GROUP : askedOn[0]) : undefined,
+    group: isUtmKey(field.key) ? UTM_FIELD_GROUP : several ? (askedOn.length > 1 ? SHARED_FIELD_GROUP : askedOn[0]) : undefined,
     hint:
       several && askedOn.length < forms.length
         ? `Only sent by: ${askedOn.join(", ")}. Anyone from another form has this blank.`

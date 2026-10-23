@@ -6,6 +6,7 @@ import { BulkSelection, RowCheck, SelectAll } from "@/components/bulk-selection"
 import { ConfirmButton } from "@/components/confirm-button";
 import { DuplicateFormButton } from "@/components/duplicate-buttons";
 import { NewFormButton } from "./new-form-button";
+import { RenameFormButton } from "@/components/rename-buttons";
 
 export const metadata = { title: "Forms" };
 
@@ -86,6 +87,7 @@ export default async function FormsPage() {
                     <td className="muted">{form.submissions[0] ? formatKL(form.submissions[0].createdAt) : "—"}</td>
                     <td className="row-actions">
                       <div className="row-buttons">
+                      <RenameFormButton form={form} />
                       <DuplicateFormButton form={form} automationCount={form._count.triggers} />
                       <ConfirmButton
                         action={deleteFormsAction.bind(null, [form.id])}

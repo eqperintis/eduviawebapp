@@ -7,8 +7,9 @@ import { jwtVerify } from "jose";
 const SESSION_COOKIE = "edv_session";
 
 // Public routes. /f is the form endpoint (and its hosted thank-you page),
-// /u the unsubscribe link, /api/cron guards itself with CRON_SECRET.
-const PUBLIC_PREFIXES = ["/login", "/forgot-password", "/reset-password", "/f/", "/u/", "/privacy", "/api/cron", "/api/health"];
+// /u the unsubscribe link, /api/cron guards itself with CRON_SECRET, and
+// /utm.js is the script the site loads to pass UTM tags to its forms.
+const PUBLIC_PREFIXES = ["/login", "/forgot-password", "/reset-password", "/f/", "/u/", "/privacy", "/api/cron", "/api/health", "/utm.js"];
 
 function getSecretKey() {
   const secret = process.env.SESSION_SECRET;

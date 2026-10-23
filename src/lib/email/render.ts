@@ -1,5 +1,6 @@
 import { BRAND, brandAsset, escapeHtml, LOGO, SITE_URL } from "@/lib/brand";
 import { displayValue, labelFromKey } from "@/lib/forms/fields";
+import { isUtmKey } from "@/lib/forms/utm";
 
 /**
  * Turns an automation step's plain text into the email that gets sent:
@@ -16,10 +17,14 @@ export type TemplateContext = {
   answers: Record<string, unknown>;
   /** Field labels by key, for {{answers}}. */
   labels?: Record<string, string>;
+  /** Leave UTM tags out of {{answers}}: in an email to the person, "UTM source: facebook" means nothing to them. */
+  answersWithoutUtm?: boolean;
 };
 
 export function answerRows(ctx: TemplateContext): [string, string][] {
-  return Object.entries(ctx.answers).map(([key, value]) => [ctx.labels?.[key] || labelFromKey(key), displayValue(value)]);
+  return Object.entries(ctx.answers)
+    .filter(([key]) => !(ctx.answersWithoutUtm && isUtmKey(key)))
+    .map(([key, value]) => [ctx.labels?.[key] || labelFromKey(key), displayValue(value)]);
 }
 
 export function tokenValue(token: string, ctx: TemplateContext): string | null {

@@ -5,6 +5,7 @@ import { BulkSelection, RowCheck, SelectAll } from "@/components/bulk-selection"
 import { ConfirmButton } from "@/components/confirm-button";
 import { DuplicateAutomationButton } from "@/components/duplicate-buttons";
 import { NewAutomationButton } from "./new-automation-button";
+import { RenameAutomationButton } from "@/components/rename-buttons";
 
 export const metadata = { title: "Automations" };
 
@@ -97,6 +98,7 @@ export default async function AutomationsPage() {
                     <td className="mono">{automation._count.runs}</td>
                     <td className="row-actions">
                       <div className="row-buttons">
+                      <RenameAutomationButton automation={automation} />
                       <DuplicateAutomationButton automation={automation} />
                       <ConfirmButton
                         action={deleteAutomationsAction.bind(null, [automation.id])}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { FormState } from "@/lib/actions/auth";
 import { useFormAction } from "@/components/use-form-action";
 import { FormMessage } from "@/components/form-message";
@@ -8,8 +8,8 @@ import { FormMessage } from "@/components/form-message";
 /**
  * How everything new is created in this app, like Formspree's "+ Add New":
  * a button first, and only after pressing it a small dialog asking for a
- * name. Nothing sits on the page waiting to be typed into. Duplicate uses
- * it too, with the name filled in as "Copy of …".
+ * name. Nothing sits on the page waiting to be typed into. Duplicate and
+ * Rename use it too, with the name filled in.
  */
 export function CreateDialog({
   buttonLabel,
@@ -21,6 +21,8 @@ export function CreateDialog({
   buttonClassName = "btn",
   buttonIcon = "+",
   initialName = "",
+  pendingLabel = "Creating…",
+  closeOnSuccess = false,
 }: {
   buttonLabel: string;
   title: string;
@@ -34,11 +36,18 @@ export function CreateDialog({
   buttonIcon?: string | null;
   /** What the name starts as, e.g. "Copy of Enquiry". Selected on open, so typing replaces it. */
   initialName?: string;
+  pendingLabel?: string;
+  /** For an action that stays on the page (Rename): close once it succeeds. */
+  closeOnSuccess?: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputId = useId();
   const [name, setName] = useState(initialName);
   const [state, submit, pending] = useFormAction(action);
+
+  useEffect(() => {
+    if (closeOnSuccess && state?.ok) dialogRef.current?.close();
+  }, [closeOnSuccess, state]);
 
   const close = () => {
     dialogRef.current?.close();
@@ -83,10 +92,10 @@ export function CreateDialog({
             />
           </div>
           {children}
-          <FormMessage state={state} />
+          <FormMessage state={closeOnSuccess ? (state?.error ? { error: state.error } : undefined) : state} />
           <div className="row">
             <button className="btn" type="submit" disabled={pending || !name.trim()}>
-              {pending ? "Creating…" : submitLabel}
+              {pending ? pendingLabel : submitLabel}
             </button>
             <button className="btn ghost" type="button" onClick={close}>
               Cancel

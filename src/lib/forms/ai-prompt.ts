@@ -1,4 +1,5 @@
 import type { FieldDef } from "@/lib/forms/fields";
+import { isUtmKey } from "@/lib/forms/utm";
 
 /**
  * A prompt the owner pastes into an AI assistant (Claude, ChatGPT, Cursor…)
@@ -17,8 +18,11 @@ function fieldLine(field: FieldDef): string {
 
 export function buildAiPrompt(args: { endpoint: string; formName: string; fields: FieldDef[]; allowedDomains: string[] }): string {
   const { endpoint } = args;
-  const fieldsSection = args.fields.length
-    ? `The form already sends these fields. Use the same \`name\` attributes so the answers keep lining up with my automations:\n\n${args.fields.map(fieldLine).join("\n")}\n\nYou can add fields; new names are picked up automatically.`
+  const utmScript = `${new URL(endpoint).origin}/utm.js`;
+  // UTM tags come from the script below, not from inputs on the form.
+  const formFields = args.fields.filter((field) => !isUtmKey(field.key));
+  const fieldsSection = formFields.length
+    ? `The form already sends these fields. Use the same \`name\` attributes so the answers keep lining up with my automations:\n\n${formFields.map(fieldLine).join("\n")}\n\nYou can add fields; new names are picked up automatically.`
     : "The form doesn't have any fields yet. Choose sensible `name` attributes (e.g. `name`, `email`, `message`); they're picked up automatically on the first submission.";
   const domains = args.allowedDomains.length
     ? `The endpoint only accepts submissions sent from pages on: ${args.allowedDomains.join(", ")} (subdomains included). Submissions from anywhere else, including localhost, are rejected with a 403, so test on the real site.`
@@ -63,6 +67,22 @@ It goes on eduvia.my, so it must look like the rest of that site. If the page al
 
 ---
 
+# Where people came from (UTM tags)
+
+Add this once to every page that has the form (in the \`<head>\`, or anywhere before \`</body>\`):
+
+\`\`\`html
+<script src="${utmScript}" defer></script>
+\`\`\`
+
+When someone arrives on a link with UTM tags (e.g. \`?utm_source=facebook&utm_campaign=holiday_camp\`), it keeps them for 30 days and adds them as hidden fields (\`utm_source\`, \`utm_medium\`, \`utm_campaign\`, \`utm_content\`, \`utm_term\`) to every form whose \`action\` is this endpoint, or that has a \`data-utm\` attribute. So:
+- A form with \`action="${endpoint}"\` needs nothing else.
+- A form submitted with fetch() and \`new FormData(form)\` and no \`action\`: give the \`<form>\` a \`data-utm\` attribute.
+- If you send JSON instead of FormData, merge \`window.eduviaUtm?.()\` into the object you send.
+Don't add your own \`utm_*\` inputs.
+
+---
+
 # Basic HTML
 
 Point the form's \`action\` at the endpoint and set the method to \`POST\`:
@@ -85,7 +105,7 @@ Point the form's \`action\` at the endpoint and set the method to \`POST\`:
 Stay on the page, show errors inline, and follow an automation's redirect:
 
 \`\`\`html
-<form id="my-form" novalidate>
+<form id="my-form" data-utm novalidate>
   <label for="email">Email</label>
   <input type="email" id="email" name="email" required>
   <label for="message">Message</label>
@@ -158,7 +178,7 @@ export function ContactForm() {
 
   if (state.succeeded) return <p>Thanks! We've got it.</p>;
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} data-utm>
       <label htmlFor="email">Email</label>
       <input type="email" id="email" name="email" required />
       <label htmlFor="message">Message</label>

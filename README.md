@@ -30,7 +30,8 @@ Or post JSON/FormData with `fetch()` and `Accept: application/json` to get `{ "o
 - **Only accept submissions from:** lock a form to your domains (subdomains included).
 - **After submitting:** an automation's Redirect wins, then `_next`, then the form's redirect link, then the hosted thank-you page.
 - Rate limited per visitor (15 per 10 minutes per form).
-- **Duplicate** (in the list or at the top of a form) copies a form's settings and learned fields under a new endpoint, and can copy the automations it starts for the new form, as drafts.
+- **Where people came from (UTM):** add `<script src="https://marketing.eduvia.my/utm.js" defer></script>` to the page. It keeps `utm_source`, `utm_medium`, `utm_campaign`, `utm_content` and `utm_term` from the visitor's link for 30 days and adds them as hidden fields to forms that send here (or have a `data-utm` attribute). They're saved like any answer: on submissions and in the CSV, as a "Where they came from (UTM)" group in conditions, as Google Sheets columns and as `{{utm_source}}` in emails (but left out of `{{answers}}` in emails to the person). JSON senders can merge `window.eduviaUtm()`.
+- **Rename** changes a form's name; its endpoint stays the same. **Duplicate** (in the list or at the top of a form) copies a form's settings and learned fields under a new endpoint, and can copy the automations it starts for the new form, as drafts.
 
 ## Automations
 
@@ -46,7 +47,7 @@ A flow starts when one or more chosen forms are submitted. Steps:
 | Google Sheets | Adds the submission as a row in a sheet picked from Google Drive. |
 | Webhook | POSTs the submission as JSON to another app, e.g. Zapier or Make. |
 
-Text can use `{{name}}`, `{{email}}`, `{{form_name}}`, `{{submitted_at}}`, `{{answers}}` and `{{<field name>}}`. Each automation's **Runs** tab shows what happened to every person, step by step. **Duplicate** copies the whole flow, started by the same forms, as a draft.
+Text can use `{{name}}`, `{{email}}`, `{{form_name}}`, `{{submitted_at}}`, `{{answers}}` and `{{<field name>}}`. Each automation's **Runs** tab shows what happened to every person, step by step. **Rename** changes its name; **Duplicate** copies the whole flow, started by the same forms, as a draft.
 
 ## Brand
 

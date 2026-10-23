@@ -27,6 +27,18 @@ export async function createFormAction(_prev: FormState, formData: FormData): Pr
   redirect(`/forms/${form.id}?tab=integration`);
 }
 
+export async function renameFormAction(formId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
+  const name = text(formData, "name");
+  if (!name) return { error: "Give the form a name." };
+  if (name.length > 120) return { error: "Keep the name under 120 characters." };
+  await db.form.update({ where: { id: formId }, data: { name } });
+  revalidatePath("/forms");
+  revalidatePath(`/forms/${formId}`);
+  revalidatePath("/automations");
+  return { ok: "Renamed." };
+}
+
 /**
  * Copies a form's settings and learned fields under a new endpoint.
  * Submissions stay with the original. With "withAutomations" ticked, every

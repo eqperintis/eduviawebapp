@@ -6,6 +6,8 @@
  * imports so the builder UI can use it too.
  */
 
+import { isUtmKey, UTM_LABELS } from "@/lib/forms/utm";
+
 export type FieldKind = "text" | "email" | "phone" | "number" | "choice" | "datetime";
 
 export const FIELD_KINDS: { value: FieldKind; label: string }[] = [
@@ -53,8 +55,9 @@ export function parseFields(raw: string | null | undefined): FieldDef[] {
   }
 }
 
-/** "first_name" → "First name". */
+/** "first_name" → "First name". UTM tags get their own clearer names. */
 export function labelFromKey(key: string): string {
+  if (isUtmKey(key)) return UTM_LABELS[key];
   const words = key
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/[_\-.]+/g, " ")

@@ -182,7 +182,8 @@ export function Builder({ automation, nodes, trigger, forms, selectedFormIds, go
             onClose={() => setSelected(null)}
           />
         ) : (
-          <AutomationSettings automation={automation} forms={forms} selectedFormIds={selectedFormIds} />
+          // Keyed by name: after a Rename it starts again from the new name instead of saving the old one back.
+          <AutomationSettings key={automation.name} automation={automation} forms={forms} selectedFormIds={selectedFormIds} />
         )}
       </div>
     </div>

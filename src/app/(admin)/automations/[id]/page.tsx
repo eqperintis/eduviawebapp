@@ -8,6 +8,7 @@ import { getGoogleConnectionStatus, googlePickerApiKey, googleProjectNumber } fr
 import { refreshStalePages } from "@/lib/forms/page-read";
 import { Builder } from "./builder";
 import { DuplicateAutomationButton } from "@/components/duplicate-buttons";
+import { RenameAutomationButton } from "@/components/rename-buttons";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -67,7 +68,10 @@ export default async function AutomationPage({
         </p>
         <div className="spread">
           <h1>{automation.name}</h1>
-          <DuplicateAutomationButton automation={{ id: automation.id, name: automation.name }} />
+          <div className="row">
+            <RenameAutomationButton automation={{ id: automation.id, name: automation.name }} />
+            <DuplicateAutomationButton automation={{ id: automation.id, name: automation.name }} />
+          </div>
         </div>
       </div>
 

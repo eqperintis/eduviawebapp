@@ -62,6 +62,17 @@ export async function createAutomationAction(_prev: FormState, formData: FormDat
   redirect(`/automations/${automation.id}`);
 }
 
+export async function renameAutomationAction(automationId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return { error: "Give the automation a name." };
+  if (name.length > 120) return { error: "Keep the name under 120 characters." };
+  await db.automation.update({ where: { id: automationId }, data: { name } });
+  revalidatePath("/automations");
+  revalidatePath(`/automations/${automationId}`);
+  return { ok: "Renamed." };
+}
+
 /** Copies the whole flow under a new name, started by the same forms. The copy is a draft. */
 export async function duplicateAutomationAction(automationId: string, _prev: FormState, formData: FormData): Promise<FormState> {
   await requireUser();
