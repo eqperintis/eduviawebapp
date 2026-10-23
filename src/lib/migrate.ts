@@ -114,7 +114,8 @@ async function runDataJobs(tx: Tx): Promise<string[]> {
   return ran;
 }
 
-async function seed(tx: Tx): Promise<void> {
+/** `fresh`: the tables were created in this same start-up, i.e. a brand-new database. */
+async function seed(tx: Tx, fresh: boolean): Promise<void> {
   if ((await tx.user.count()) === 0) {
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD;
@@ -126,7 +127,9 @@ async function seed(tx: Tx): Promise<void> {
     }
   }
 
-  if ((await tx.form.count()) === 0) {
+  // Only on a brand-new database. Checking for "no forms" instead brought the
+  // starter form back on every restart after the owner deleted all their forms.
+  if (fresh && (await tx.form.count()) === 0) {
     await tx.form.create({
       data: {
         name: "Eduvia: Enquiry",
@@ -160,7 +163,7 @@ export function ensureDatabase(): Promise<void> {
           if (applied.length) console.log(`[migrate] applied ${applied.join(", ")}`);
           const jobs = await runDataJobs(tx);
           if (jobs.length) console.log(`[migrate] ran ${jobs.join(", ")}`);
-          await seed(tx);
+          await seed(tx, applied.includes("0001_init"));
         } finally {
           await tx.$queryRawUnsafe("SELECT RELEASE_LOCK(?)", LOCK_NAME);
         }
